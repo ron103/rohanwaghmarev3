@@ -5,7 +5,7 @@ export const metadata: Metadata = { title: "Site info" };
 
 const colophon = {
   name: "rohanwaghmarev3",
-  type: ["Newsreader", "Geist", "Geist Mono"],
+  type: ["Fraunces", "Google Sans Flex", "Geist Mono"],
   built_with: ["Next.js 16", "React 19", "Tailwind CSS 4", "Motion", "Sonner"],
   texture: "SVG fractal noise, multiplied at 16% over white",
   inspired_by: "anushriya.com",

@@ -4,7 +4,7 @@ import { ArrowUpRight, Download, FileText, Mail } from "lucide-react";
 import { Page } from "@/components/page";
 import { GoldenGateIcon, GitHubIcon, LinkedInIcon, XIcon } from "@/components/icons";
 import { SectionNav } from "@/components/about/section-nav";
-import { StoryReflow, type Paragraph } from "@/components/about/story-reflow";
+import { Story, type Paragraph } from "@/components/about/story";
 import { GitLog, type Commit } from "@/components/about/git-log";
 import { ToolShelf, type Tool } from "@/components/about/tool-shelf";
 import { AskRohan, type QA } from "@/components/about/ask-rohan";
@@ -167,7 +167,7 @@ export default function About() {
               </a>
             </li>
           </ul>
-          <StoryReflow paragraphs={story} />
+          <Story paragraphs={story} />
         </section>
 
         {/* Experience */}

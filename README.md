@@ -1,6 +1,6 @@
 # rohanwaghmarev3
 
-Rohan Waghmare's portfolio, v3. A white, grainy "lab notebook": Newsreader for the voice, Geist for the UI, Geist Mono for numbers, one ink-blue accent, and the Golden Gate in orange.
+Rohan Waghmare's portfolio, v3. A white, grainy "lab notebook": Fraunces for the voice, Google Sans Flex for the UI, Geist Mono for numbers, one ink-blue accent, and the Golden Gate in orange.
 
 ```bash
 npm install
@@ -32,7 +32,7 @@ npm run build
 
 0. Foundation (done)
 1. Home: streaming tagline, badge pile, trace waterfall, rolling numbers (done)
-2. About: portrait reflow, git-log timeline, physics tool shelf, Ask Rohan (done)
+2. About: story wrapped around the portrait, git-log timeline, physics tool shelf, Ask Rohan (done)
 3. Work: pipeline diagram, before/after slider, trace replay (done)
 4. Projects, Notes, Resume, 404
 5. Presence, ⌘K palette, real RAG, sound

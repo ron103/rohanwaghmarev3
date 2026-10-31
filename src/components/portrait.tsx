@@ -15,6 +15,7 @@ export function Portrait({ size, className, priority }: { size: number; classNam
         placeholder="blur"
         priority={priority}
         sizes={`${size * 2}px`}
+        draggable={false}
         className="absolute inset-0 size-full origin-[48%_30%] scale-[1.5] object-cover object-[50%_18%]"
       />
     </span>

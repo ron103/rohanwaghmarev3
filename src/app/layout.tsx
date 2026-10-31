@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Newsreader } from "next/font/google";
+import { Fraunces, Geist_Mono, Google_Sans_Flex } from "next/font/google";
 import { Toaster } from "sonner";
 import { TopBar } from "@/components/top-bar";
 import { MobileDock } from "@/components/mobile-dock";
@@ -8,16 +8,18 @@ import { CursorPrompt } from "@/components/cursor";
 import { site } from "@/lib/site";
 import "./globals.css";
 
-const newsreader = Newsreader({
-  variable: "--font-newsreader",
+// Display serif. SOFT/WONK are set in globals.css on .font-serif.
+const fraunces = Fraunces({
+  variable: "--font-fraunces",
   subsets: ["latin"],
-  style: ["normal", "italic"],
-  axes: ["opsz"],
+  axes: ["SOFT", "WONK", "opsz"],
+  display: "block",
 });
 
-const geist = Geist({
-  variable: "--font-geist",
+const googleSans = Google_Sans_Flex({
+  variable: "--font-google-sans",
   subsets: ["latin"],
+  axes: ["opsz"],
 });
 
 const geistMono = Geist_Mono({
@@ -35,7 +37,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${newsreader.variable} ${geist.variable} ${geistMono.variable}`}
+      className={`${fraunces.variable} ${googleSans.variable} ${geistMono.variable}`}
     >
       <body>
         <TopBar />

@@ -20,8 +20,8 @@
   --color-bridge: #d9532b;
   --color-ok: #2e8b57;
 
-  --font-serif: var(--font-newsreader), "Iowan Old Style", Georgia, serif;
-  --font-sans: var(--font-geist), -apple-system, "Segoe UI", system-ui, sans-serif;
+  --font-serif: var(--font-fraunces), Georgia, serif;
+  --font-sans: var(--font-google-sans), -apple-system, "Segoe UI", system-ui, sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
 
   --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
@@ -72,6 +72,13 @@ body {
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
+/* No native "drag the image out" ghost; our own drag interactions own the pointer. */
+img,
+svg {
+  -webkit-user-drag: none;
+  user-select: none;
+}
+
 ::selection {
   background: var(--color-hl);
   color: var(--color-ink);
@@ -81,6 +88,13 @@ h1,
 h2,
 h3 {
   text-wrap: balance;
+}
+
+/* Fraunces with soft, rounded terminals and its quirky alternates off. */
+.font-serif {
+  font-variation-settings:
+    "SOFT" 100,
+    "WONK" 0;
 }
 
 /* One focus ring everywhere */
