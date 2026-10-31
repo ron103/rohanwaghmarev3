@@ -1,0 +1,572 @@
+<title>Rohan v3 Interaction Plan</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&family=Geist:wght@100..900&family=Geist+Mono:wght@100..900&display=swap">
+<style>
+/* Layout: one reading column (~760px) with a sticky left index on desktop; demos sit inline as flat cards. */
+:root{
+  --paper:#FFFFFF;--sheet:#FFFFFF;--card:#F2F2EF;--card-2:#EBEBE7;--line:#E4E4DF;
+  --ink:#1B1E24;--ink-2:#343842;--muted:#6A6F78;--faint:#9A9EA6;
+  --blue:#2F3FD1;--blue-fill:#E7E9FB;--hl-a:rgba(255,215,64,.55);
+  --night:#12152A;--night-ink:#E9EAF3;--ok:#2E8B57;
+  --serif:"Newsreader","Iowan Old Style",Georgia,serif;
+  --sans:"Geist",-apple-system,"Segoe UI",system-ui,sans-serif;
+  --mono:"Geist Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  --ease:cubic-bezier(.22,1,.36,1);
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#121419;--sheet:#171A20;--card:#1E2129;--card-2:#262A33;--line:#2C303A;
+  --ink:#ECEDF0;--ink-2:#D2D4DA;--muted:#9195A0;--faint:#686C77;
+  --blue:#8C98FF;--blue-fill:#232849;--hl-a:rgba(232,200,64,.28);--night:#0B0D1C;--ok:#5CC08A;color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#121419;--sheet:#171A20;--card:#1E2129;--card-2:#262A33;--line:#2C303A;
+  --ink:#ECEDF0;--ink-2:#D2D4DA;--muted:#9195A0;--faint:#686C77;
+  --blue:#8C98FF;--blue-fill:#232849;--hl-a:rgba(232,200,64,.28);--night:#0B0D1C;--ok:#5CC08A;color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:15.5px;line-height:1.6}
+.grain{position:fixed;inset:0;pointer-events:none;z-index:50;opacity:.16;mix-blend-mode:multiply;background-size:220px 220px;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.12  0 0 0 0 0.13  0 0 0 0 0.16  0 0 0 1.4 -0.2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");transition:opacity .3s}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .grain{mix-blend-mode:screen;opacity:.06}}
+:root[data-theme="dark"] .grain{mix-blend-mode:screen;opacity:.06}
+body.nograin .grain{opacity:0}
+.shell{max-width:1180px;margin:0 auto;display:grid;grid-template-columns:200px minmax(0,1fr);gap:64px;padding-block:72px 96px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.toc{position:sticky;top:calc(env(safe-area-inset-top,0px) + 40px);align-self:start;display:grid;gap:4px;font-size:13.5px}
+.toc a{color:var(--faint);text-decoration:none;padding:3px 0;display:flex;gap:8px;align-items:center;transition:color .15s}
+.toc a:hover{color:var(--blue)}
+.toc a.on{color:var(--ink)}
+.toc a.on::after{content:"";width:6px;height:6px;border-radius:2px;background:var(--blue);rotate:45deg}
+main{max-width:780px;min-width:0;display:grid;gap:96px}
+section{display:grid;gap:22px;scroll-margin-top:40px}
+h1,h2,h3{font-family:var(--serif);margin:0;text-wrap:balance;letter-spacing:-.012em}
+h1{font-size:clamp(40px,6vw,64px);line-height:1.03;font-weight:500}
+h1 em{font-style:italic;font-weight:300;color:var(--blue)}
+h2{font-size:34px;font-weight:300;line-height:1.1}
+h3{font-size:22px;font-weight:400}
+p{margin:0}
+.lede{color:var(--muted);font-size:17px;max-width:62ch}
+.eyebrow{font-family:var(--mono);font-size:12px;color:var(--muted);letter-spacing:.03em}
+.mark{background:linear-gradient(transparent 52%,var(--hl-a) 52%,var(--hl-a) 92%,transparent 92%);padding:0 .06em}
+code,.mono{font-family:var(--mono);font-size:.88em}
+.muted{color:var(--muted)}
+
+/* tables */
+.tbl{overflow-x:auto;border-radius:16px;box-shadow:inset 0 0 0 1px var(--line);background:var(--sheet)}
+table{border-collapse:collapse;width:100%;font-size:14px;min-width:620px}
+th,td{text-align:left;vertical-align:top;padding:12px 16px;border-top:1px solid var(--line)}
+thead th{border-top:0;font-family:var(--mono);font-size:11.5px;font-weight:500;color:var(--muted);letter-spacing:.03em}
+td:first-child{font-weight:600;white-space:nowrap}
+td .mono{color:var(--muted)}
+.tag{display:inline-block;font-family:var(--mono);font-size:11px;padding:1px 7px;border-radius:999px;background:var(--card);color:var(--ink-2);margin:2px 4px 2px 0;white-space:nowrap}
+.tag.b{background:var(--blue-fill);color:var(--blue)}
+
+/* page cards */
+.page{background:var(--sheet);border-radius:20px;box-shadow:inset 0 0 0 1px var(--line);padding:26px 28px;display:grid;gap:16px}
+.page header{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
+.page header .mono{color:var(--faint);font-size:12px}
+.hero-moment{background:var(--card);border-radius:14px;padding:16px 18px;display:grid;gap:4px}
+.hero-moment b{font-family:var(--mono);font-size:11.5px;font-weight:500;color:var(--blue);letter-spacing:.03em}
+.page ul{margin:0;padding-left:18px;display:grid;gap:7px;color:var(--ink-2)}
+.page li::marker{color:var(--faint)}
+.page li b{font-weight:600;color:var(--ink)}
+
+/* demos */
+.demo{background:var(--sheet);border-radius:20px;box-shadow:inset 0 0 0 1px var(--line);padding:24px;display:grid;gap:14px;position:relative;overflow:hidden}
+.demo .cap{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font-family:var(--mono);font-size:11.5px;color:var(--muted)}
+.btn{all:unset;cursor:pointer;font-size:13px;font-weight:500;padding:7px 13px;border-radius:999px;background:var(--card);color:var(--ink-2);transition:background-color .15s,color .15s,scale .15s;display:inline-flex;gap:7px;align-items:center}
+.btn:hover{background:var(--blue-fill);color:var(--blue)}
+.btn:active{scale:.96}
+.btn:focus-visible,.toc a:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+.demos{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+
+.stream{font-family:var(--serif);font-size:34px;line-height:1.1;font-weight:300;color:var(--faint);min-height:2.3em}
+.stream .tok{animation:tokin .35s var(--ease) both}
+@keyframes tokin{from{opacity:0;filter:blur(5px)}}
+.caret{display:inline-block;width:.42em;height:.85em;background:var(--blue);vertical-align:-.06em;margin-left:3px;animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+
+.zone{height:170px;border-radius:14px;background:var(--card);display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:10px;cursor:none}
+.zone > div{border-radius:10px;background:var(--sheet);display:grid;place-items:center;font-family:var(--mono);font-size:11.5px;color:var(--faint);transition:background-color .2s}
+.zone > div:hover{background:var(--blue-fill)}
+#cur{position:fixed;left:0;top:0;pointer-events:none;z-index:60;display:flex;align-items:center;gap:8px;opacity:0;transition:opacity .15s}
+#cur .dot{width:10px;height:10px;border-radius:50%;background:var(--blue);box-shadow:0 0 0 4px color-mix(in srgb,var(--blue) 20%,transparent)}
+#cur .lbl{font-family:var(--mono);font-size:11.5px;color:var(--blue);background:var(--sheet);padding:3px 8px;border-radius:999px;box-shadow:0 0 0 1px var(--line),0 6px 16px -8px rgba(0,0,0,.3);white-space:nowrap}
+
+.metric{display:flex;align-items:baseline;gap:12px;font-family:var(--mono);font-size:44px;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.metric s{font-size:22px;color:var(--faint)}
+.metric .ar{color:var(--blue);font-size:22px}
+
+.mag-wrap{height:170px;display:grid;place-items:center;border-radius:14px;background:var(--card)}
+.mag{all:unset;cursor:pointer;padding:14px 22px;border-radius:999px;background:var(--ink);color:var(--paper);font-weight:500;transition:transform .35s var(--ease)}
+.mag:focus-visible{outline:2px solid var(--blue);outline-offset:3px}
+
+.night{background:var(--night);color:var(--night-ink);border-radius:20px;height:260px;position:relative;overflow:hidden}
+.night canvas{position:absolute;inset:0;width:100%;height:100%}
+.night .mail{position:absolute;left:24px;bottom:22px;font-family:var(--serif);font-size:clamp(22px,4vw,40px);font-weight:500;display:flex;flex-wrap:wrap}
+.night .mail span{display:inline-block;transition:transform .35s var(--ease),color .2s}
+.night .mail span:hover{transform:translateY(-6px);color:#8C98FF}
+.night .k{position:absolute;left:24px;top:20px;font-family:var(--mono);font-size:11.5px;opacity:.6}
+
+.tiles{position:relative;aspect-ratio:16/9;max-width:100%;border-radius:14px;overflow:hidden;background:linear-gradient(135deg,#C9CCE8,#EEF0E6 55%,#D8DCC8);display:grid;place-items:center;font-family:var(--serif);font-size:28px;color:#2b2f45}
+.tiles .grid{position:absolute;inset:0;display:grid;grid-template-columns:repeat(8,1fr);grid-template-rows:repeat(5,1fr)}
+.tiles .grid i{background:var(--card)}
+.tiles .grid i:nth-child(odd){background:var(--card-2)}
+.tiles.go .grid i{animation:pop .56s cubic-bezier(.16,1,.3,1) forwards}
+@keyframes pop{18%{filter:brightness(1.8);transform:scale(1.06)}45%{transform:scale(1.15) rotate(var(--r))}to{opacity:0;transform:scale(.2) rotate(var(--r))}}
+
+.phase{display:grid;grid-template-columns:76px minmax(0,1fr);gap:16px;padding:16px 0;border-top:1px solid var(--line)}
+.phase:first-child{border-top:0}
+.phase .n{font-family:var(--mono);font-size:12px;color:var(--blue);padding-top:3px}
+.phase p{color:var(--muted)}
+.ask{background:var(--blue-fill);border-radius:18px;padding:22px 24px;display:grid;gap:10px}
+.ask h3{color:var(--blue)}
+.ask ol{margin:0;padding-left:20px;display:grid;gap:6px}
+.note-src{font-size:13px;color:var(--faint)}
+.note-src a{color:var(--muted)}
+
+.pf{display:grid;grid-template-columns:minmax(0,1fr) 280px;gap:48px;background:var(--sheet);border-radius:20px;box-shadow:inset 0 0 0 1px var(--line);padding:32px 36px}
+.pf-left{display:grid;gap:6px;align-content:start;min-width:0}
+.pf-logo{display:flex;align-items:center;gap:10px;margin-bottom:36px}
+.pf-logo svg{width:44px;height:44px}
+.pf-logo .mono{font-size:11px;color:var(--faint)}
+.pf-h{font-size:clamp(34px,5vw,48px);font-weight:600;line-height:1.04}
+.pf-tag{font-family:var(--serif);font-size:clamp(28px,4vw,40px);font-weight:300;line-height:1.08;color:var(--faint)}
+.pf-meta{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:40px;font-size:14px}
+.pf-meta b{display:block;font-weight:600;color:var(--ink-2)}
+.pf-meta span{color:var(--muted)}
+.pf-right{border-left:1px solid var(--line);padding-left:32px;display:grid;gap:12px;align-content:center}
+.pf-photo{all:unset;cursor:pointer;width:112px;height:112px;border-radius:50%;display:grid;place-items:center;text-align:center;font-family:var(--mono);font-size:10.5px;line-height:1.3;color:var(--faint);background:repeating-linear-gradient(135deg,var(--card) 0 6px,var(--card-2) 6px 12px);box-shadow:0 0 0 4px var(--sheet),0 0 0 5px var(--line),0 10px 24px -12px rgba(0,0,0,.3);animation:bloom .7s cubic-bezier(.2,.9,.25,1.12) backwards;transition:transform .35s var(--ease)}
+.pf-photo:hover{transform:rotate(-4deg) scale(1.03)}
+.pf-photo:focus-visible{outline:2px solid var(--blue);outline-offset:6px}
+@keyframes bloom{from{opacity:0;transform:scale(.55) rotate(-16deg)}}
+.pf-hello{font-size:15.5px;margin-top:8px}
+.pf-bio{color:var(--muted);font-size:15px}
+.pf-icons{display:flex;align-items:center;gap:14px;margin-top:8px;color:var(--muted)}
+.pf-icons svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;display:block;transition:color .15s}
+.pf-icons .glyph{width:30px;height:18px;stroke:none}
+.pf-icons .sep{width:1px;height:16px;background:var(--line)}
+.tip-host{position:relative;cursor:pointer;border-radius:4px}
+.tip-host:hover,.tip-host:focus-visible{color:var(--blue)}
+.tip-host:focus-visible{outline:2px solid var(--blue);outline-offset:3px}
+.tip{position:absolute;top:calc(100% + 6px);left:0;white-space:nowrap;font-size:12.5px;color:var(--muted);visibility:hidden}
+.tip-host:hover .tip,.tip-host:focus-visible .tip{visibility:visible}
+@media (max-width:900px){
+  .pf{grid-template-columns:minmax(0,1fr);padding:22px;gap:28px}
+  .pf-right{border-left:0;border-top:1px solid var(--line);padding:24px 0 0}
+  .pf-meta{grid-template-columns:minmax(0,1fr)}
+}
+@media (max-width:900px){
+  .shell{grid-template-columns:minmax(0,1fr);gap:24px;padding-block:40px 72px}
+  .toc{position:static;display:flex;flex-wrap:wrap;gap:4px 14px}
+  .toc a.on::after{display:none}
+  .demos{grid-template-columns:minmax(0,1fr)}
+  .page{padding:20px}
+  h2{font-size:28px}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media (hover:none){.zone{cursor:auto}}
+</style>
+
+<div class="grain" aria-hidden="true"></div>
+<div id="cur" aria-hidden="true"><span class="dot"></span><span class="lbl" id="curlbl"></span></div>
+
+<div class="shell">
+<nav class="toc" aria-label="Sections">
+  <a href="#intro" class="on">Overview</a>
+  <a href="#study">What she does</a>
+  <a href="#demos">Try the moments</a>
+  <a href="#profile">Profile card</a>
+  <a href="#system">Sitewide system</a>
+  <a href="#pages">Page by page</a>
+  <a href="#space">Use of space</a>
+  <a href="#libs">Libraries</a>
+  <a href="#phases">Build order</a>
+  <a href="#budget">Guardrails</a>
+</nav>
+
+<main>
+<section id="intro">
+  <div class="eyebrow">rohanwaghmarev3 · interaction plan · 2026-10-31</div>
+  <h1>Every page gets <em>one moment</em> worth playing with.</h1>
+  <p class="lede">This plan builds on the lab-notebook direction. The site keeps her grain texture, spacing and playfulness, and the moments themselves come from Rohan's world: streaming tokens, traces, graphs and agents. Real content can come later. Each page below names its one signature moment, its supporting details, and the free libraries that do the heavy lifting.</p>
+</section>
+
+<section id="study">
+  <div class="eyebrow">01 · what anushriya.com actually does</div>
+  <h2>Her full interaction inventory</h2>
+  <p class="lede">These come from reading her shipped code and testing each one in the browser. Most of them are invisible until you move the mouse.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>Effect</th><th>How it works</th><th>Where</th></tr></thead>
+    <tbody>
+      <tr><td>Paper grain</td><td>Fixed SVG <code>feTurbulence</code> layer, multiply at 16%. A second version "breathes" (opacity .5 ↔ .22) as an image placeholder.</td><td>Every page</td></tr>
+      <tr><td>Cursor prompt</td><td>A small poppy label follows the mouse, offset from the pointer. Its words reveal one at a time, with a bobbing click icon. Mouse only; it hides on touch and on press.</td><td>Cards, links</td></tr>
+      <tr><td>Custom cursor</td><td>A hand-pointer SVG as a data-URI <code>cursor</code> on clickable things. <code>grab</code>/<code>grabbing</code> on draggables, <code>zoom-in</code> on images.</td><td>Sitewide</td></tr>
+      <tr><td>Footer meadow</td><td>A seeded grid of flowers (light) or stars (dark). Each one within a radius of the pointer opens and spins, staggered by distance, then closes after a randomized timeout. Click works too.</td><td>Footer</td></tr>
+      <tr><td>Sticky reveal footer</td><td>The page sits on a sheet with a 64px rounded bottom; a <code>position: sticky; bottom: 0</code> footer shows underneath.</td><td>Every page</td></tr>
+      <tr><td>Per-letter email</td><td>The giant email is split into spans. Click copies it and shows "Copied" through a toast.</td><td>Footer</td></tr>
+      <tr><td>Rotating tagline</td><td>The hero's second line swaps between personal one-liners.</td><td>Home</td></tr>
+      <tr><td>Time-of-day status</td><td>A table of 1–3 hour windows in San Francisco time, each with a line like "Making my first coffee" or "Asleep, probably. Leave a note anyway."</td><td>Playground</td></tr>
+      <tr><td>Live presence</td><td>Ably realtime count, drawn as overlapping flowers that fan apart on hover with a tooltip.</td><td>Top bar, footer</td></tr>
+      <tr><td>Stickers</td><td>Tilted cards that lift on hover, grow a page curl in the corner, and peel off and fly away on click.</td><td>Home</td></tr>
+      <tr><td>Quote cards</td><td>Each word fades in from a blur, then a marker highlight sweeps under key phrases. The quotes cycle.</td><td>Home</td></tr>
+      <tr><td>Live SVG illustrations</td><td>Isometric scenes built from small motions (rise, pop, line-draw, pulse, blink, float), each with a staggered delay, played when scrolled into view and replayed on hover.</td><td>Work cards, case studies</td></tr>
+      <tr><td>Tile-pop image load</td><td>An 8×5 checkerboard covers each image. When it loads, the tiles flash, rotate and shrink away in a stagger.</td><td>Playground media</td></tr>
+      <tr><td>Draggable portrait</td><td>Dragging the portrait makes the paragraph rewrap around it live, line by line.</td><td>About</td></tr>
+      <tr><td>Fanning 3D panes</td><td>Stacked panes in perspective that spread apart when you pick one.</td><td>Playground</td></tr>
+      <tr><td>Auto-advancing showcase</td><td>A project list on the left with a live preview on the right. It advances on a timer and pauses on hover.</td><td>Playground</td></tr>
+      <tr><td>Scroll-spy sub-nav</td><td>A sticky left list (nested on case studies). The active item gets a flower.</td><td>All inner pages</td></tr>
+      <tr><td>Code-built mockups</td><td>Product UIs rebuilt in HTML/SVG instead of screenshots, so they stay crisp and can animate.</td><td>Case studies</td></tr>
+      <tr><td>Interactive explainer</td><td>A guide to Sheridan's levels of automation embedded in an article.</td><td>Articles</td></tr>
+      <tr><td>Bar, menu and dock</td><td>A blur bar that tucks on scroll, a "Say hi" popover, a mobile bottom sheet and a floating dock.</td><td>Sitewide</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section id="demos">
+  <div class="eyebrow">02 · try the moments</div>
+  <h2>Six working sketches</h2>
+  <p class="lede">These are rough versions, so you can feel each idea before we commit. The real builds use the libraries listed further down.</p>
+  <div class="demos">
+    <div class="demo">
+      <div class="cap"><span>streaming tagline + regenerate</span><span>home hero</span></div>
+      <p class="stream" id="stream" aria-live="polite"></p>
+      <div><button class="btn" id="regen" type="button">↻ Regenerate</button></div>
+    </div>
+    <div class="demo">
+      <div class="cap"><span>cursor prompt, words stream in</span><span>sitewide</span></div>
+      <div class="zone" id="zone">
+        <div data-prompt="open case study">case</div>
+        <div data-prompt="drag to compare">slider</div>
+        <div data-prompt="copy email">email</div>
+      </div>
+    </div>
+    <div class="demo">
+      <div class="cap"><span>before → after counter</span><span>work cards</span></div>
+      <div class="metric"><s>90s</s><span class="ar">→</span><span id="num">90.0</span><span style="font-size:22px">s</span></div>
+      <div><button class="btn" id="run" type="button">▶ Run optimized</button></div>
+    </div>
+    <div class="demo">
+      <div class="cap"><span>magnetic button</span><span>CTAs</span></div>
+      <div class="mag-wrap" id="magwrap"><button class="mag" id="mag" type="button">Say hi</button></div>
+    </div>
+    <div class="demo">
+      <div class="cap"><span>tile-pop image load</span><span>project media</span></div>
+      <div class="tiles" id="tiles"><span>project preview</span><div class="grid" id="tgrid"></div></div>
+      <div><button class="btn" id="reload" type="button">↻ Reload image</button></div>
+    </div>
+    <div class="demo">
+      <div class="cap"><span>grain overlay</span><span>every page</span></div>
+      <p class="muted" style="font-size:14px">This whole page has the grain layer on. Turn it off to see how much warmth it adds.</p>
+      <div><button class="btn" id="grainbtn" type="button" aria-pressed="true">Grain: on</button></div>
+    </div>
+  </div>
+  <div class="night" id="night">
+    <canvas id="graph" aria-hidden="true"></canvas>
+    <span class="k">footer · move your mouse here, click to send a message through the graph</span>
+    <div class="mail" id="mail" aria-label="waghmarerohan30@gmail.com"></div>
+  </div>
+</section>
+
+<section id="profile">
+  <div class="eyebrow">02b · the profile card</div>
+  <h2>Small, warm, and a little bit local</h2>
+  <p class="lede">This follows her hero: a split layout with a hairline between the columns, and on the right a round photo, a warm one-line hello, two lines about you and a row of tiny icons. The first icon is a <span class="mark">cute local landmark</span>, the way her Golden Gate is. The page stays white with grain on top, the same 16% multiply noise she uses.</p>
+  <div class="pf">
+    <div class="pf-left">
+      <div class="pf-logo" title="Illustrated mark, placeholder">
+        <svg viewBox="0 0 44 44" aria-hidden="true"><circle cx="22" cy="24" r="15" fill="var(--sheet)" stroke="var(--ink)" stroke-width="2.2"/><path d="M8.5 20c2-8 8-12 14-12s11.5 3.5 13.5 11c-5-1-9-4-11-7-3 4-9 7-16.5 8z" fill="var(--ink)"/><circle cx="17" cy="25" r="1.8" fill="var(--ink)"/><circle cx="27" cy="25" r="1.8" fill="var(--ink)"/><path d="M18.5 31c2 1.6 5 1.6 7 0" stroke="var(--ink)" stroke-width="1.8" fill="none" stroke-linecap="round"/><circle cx="14" cy="29" r="1.6" fill="#F2B8B0" opacity=".8"/><circle cx="30" cy="29" r="1.6" fill="#F2B8B0" opacity=".8"/><g transform="translate(30 3)"><path d="M2 9 8 3M2 9h6M8 3v6" stroke="var(--ink)" stroke-width="1"/><circle cx="2" cy="9" r="2" fill="var(--ink)"/><circle cx="8" cy="3" r="2" fill="var(--ink)"/><circle cx="8" cy="9" r="2.2" fill="var(--blue)"/></g></svg>
+        <span class="mono">doodle-you logo · placeholder</span>
+      </div>
+      <h3 class="pf-h">Hi, I'm Rohan</h3>
+      <p class="pf-tag">Makes models cheaper than coffee.</p>
+      <div class="pf-meta">
+        <div><b>Currently</b><span>Software Developer, AI @SAP Labs</span></div>
+        <div><b>Previously</b><span>MiHIN, Binghamton Tech Collective</span></div>
+        <div><b>Studied</b><span>MS CS, Binghamton</span></div>
+      </div>
+    </div>
+    <aside class="pf-right">
+      <button class="pf-photo" type="button" aria-label="Profile photo placeholder"><span>your photo<br>goes here</span></button>
+      <b class="pf-hello">Glad you found this</b>
+      <p class="pf-bio">I build AI systems that are fast enough to ship and honest enough to trust.</p>
+      <div class="pf-icons">
+        <span class="tip-host" tabindex="0">
+          <svg class="glyph" id="glyph-bridge" viewBox="0 0 30 18" aria-hidden="true"><path d="M1 12.5h28" stroke="#D9532B" stroke-width="1.6" stroke-linecap="round"/><path d="M9 3v12M21 3v12" stroke="#D9532B" stroke-width="1.8" stroke-linecap="round"/><path d="M1 8.5C5 7 8 5 9 3c3 6 9 6 12 0 1 2 4 4 8 5.5" fill="none" stroke="#D9532B" stroke-width="1.1"/><path d="M13 6.6v5.9M15 7.2v5.3M17 6.6v5.9M4.5 7.6v4.9M25.5 7.6v4.9" stroke="#D9532B" stroke-width=".8"/></svg>
+          <span class="tip" id="placetip">Bay Area, home</span>
+        </span>
+        <i class="sep" aria-hidden="true"></i>
+        <span class="tip-host" tabindex="0"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg><span class="tip">LinkedIn</span></span>
+        <span class="tip-host" tabindex="0"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.150-.3 2.35 0 3.5A5.4 5.4 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.850v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg><span class="tip">GitHub</span></span>
+        <span class="tip-host" tabindex="0"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4l16 16M20 4 4 20"/></svg><span class="tip">X</span></span>
+        <span class="tip-host" tabindex="0"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4M10 9H8M16 13H8M16 17H8"/></svg><span class="tip">Resume</span></span>
+      </div>
+    </aside>
+  </div>
+  <div class="page"><ul>
+    <li><b>Photo:</b> a 112px circle with a 4px white ring, a hairline and a soft shadow. It blooms in on load (scale .55 and a −16° tilt, settling with a small overshoot) and tilts a little on hover. Placeholder until you send the picture: a square, well-lit shoulders-up shot works best.</li>
+    <li><b>Local icon (chosen):</b> the Golden Gate, drawn as a tiny line icon in its real International Orange. It is the one orange thing on the site, which makes it stand out. Hover shows "Bay Area, home". A click opens a small card with a live Pacific-time clock and the status line. On first load the cables draw themselves in (a line-draw animation) right after the photo pops in.</li>
+    <li><b>Doodle logo:</b> a hand-drawn version of you, like her illustrated face, with the three-node graph as your "flower". A placeholder doodle is shown above; the real one gets drawn from your photo.</li>
+    <li><b>Icon row:</b> LinkedIn, GitHub, X and Resume at 18px in pencil gray. They turn ink blue on hover and show a small tooltip underneath, like her margin tips.</li>
+    <li><b>Background:</b> pure white with the grain layer on top, as on her site. Cards use a soft neutral fill (#F2F2EF). The dot grid from the first board is gone.</li>
+  </ul></div>
+</section>
+
+<section id="system">
+  <div class="eyebrow">03 · sitewide system</div>
+  <h2>Things that live on every page</h2>
+  <div class="page">
+    <ul>
+      <li><b>Grain:</b> her exact technique, a white page with a fixed SVG-noise layer at 16% (multiply in light mode, screen in dark). Paper Shaders' grain gradient adds extra atmosphere behind the hero and footer.</li>
+      <li><b>Cursor system</b> (fine pointers only):
+        <ul>
+          <li>A blue dot that trails the real cursor on a spring.</li>
+          <li>A context label that streams in word by word ("open case study", "drag", "copy").</li>
+          <li>SVG cursors for each context: pointer, grab, crosshair over charts and graphs, text-select over code.</li>
+          <li>On touch devices all of this turns off.</li>
+        </ul>
+      </li>
+      <li><b>Magnetic targets:</b> primary buttons and the dock icons lean a few pixels toward the cursor and spring back.</li>
+      <li><b>Status line in Pacific time:</b> like her time-of-day table, in Rohan's voice. "Probably asleep. The agents are still running." "Waiting on a training run." "Second chai." Placeholder lines until you write them.</li>
+      <li><b>Live presence:</b> "3 people here right now", drawn as small nodes in the logo mark that link together as people arrive.</li>
+      <li><b>Top bar:</b> the progressive blur and tuck-on-scroll. The active page gets a blue diamond.</li>
+      <li><b>⌘K command palette:</b> jump to any page, copy the email, switch theme, open the resume, and hidden commands like <code>sudo hire rohan</code>.</li>
+      <li><b>Page transitions:</b> View Transitions, so a card's title morphs into the next page's H1.</li>
+      <li><b>Image loading:</b> the tile-pop reveal on every project image and video.</li>
+      <li><b>Footer:</b>
+        <ul>
+          <li>The sticky reveal under the rounded sheet.</li>
+          <li>A graph of nodes that light up and link toward the pointer. A click fires a "message" that hops along the edges, like agents passing work.</li>
+          <li>The giant per-letter email waves on hover and copies on click, with a toast.</li>
+        </ul>
+      </li>
+      <li><b>Sound (optional, off by default):</b> soft ticks on copy, regenerate and the command palette. A speaker toggle sits in the footer.</li>
+    </ul>
+  </div>
+</section>
+
+<section id="pages">
+  <div class="eyebrow">04 · page by page</div>
+  <h2>One signature moment per page</h2>
+
+  <article class="page">
+    <header><h3>Home</h3><span class="mono">/</span></header>
+    <div class="hero-moment"><b>signature moment</b><p>The tagline <span class="mark">streams in like a model reply</span>, with a ↻ Regenerate button. Each click streams a new line. Every fifth regenerate turns up a joke line ("I also hallucinate sometimes.").</p></div>
+    <ul>
+      <li><b>Hero meta row</b> (Currently / Previously / Studied) and the intro card with the status line.</li>
+      <li><b>Badge pile</b>, his version of her stickers: tilted cards (SAP badge, Binghamton ID, IEEE paper, a Polymarket card). You can drag and toss them; each lifts with a page curl, and a click peels it off and opens the related page.</li>
+      <li><b>Work cards:</b> the trace waterfall draws in on view, and the numbers count from the old value to the new one (90s → 11s). Hovering replays it.</li>
+      <li><b>Projects:</b> looping video previews with the tile-pop load and the cursor label "open project".</li>
+      <li><b>Notes:</b> quote cards with words blurring in and a hand-drawn highlight sweeping under the key phrase, cycling every few seconds.</li>
+    </ul>
+    <div><span class="tag b">motion</span><span class="tag b">gsap SplitText</span><span class="tag b">@number-flow/react</span><span class="tag b">rough-notation</span><span class="tag">placeholders: badge art, project videos</span></div>
+  </article>
+
+  <article class="page">
+    <header><h3>About</h3><span class="mono">/about</span></header>
+    <div class="hero-moment"><b>signature moment</b><p><span class="mark">Drag the portrait and the story rewraps around it</span> live, line by line, as on her site. That's the Pretext library.</p></div>
+    <ul>
+      <li><b>Experience as <code>git log --graph</code>:</b> each job is a commit with a hash, date and message, and a branch line draws down the page as you scroll. Clicking a commit expands its "diff" (the highlights).</li>
+      <li><b>Tool shelf with physics:</b> chips for Python, PyTorch, vLLM, LangGraph and so on fall into a box when the section appears. You can grab and throw them.</li>
+      <li><b>Ask Rohan:</b> a small chat box answering questions about him, with streamed replies. It starts with canned answers and can become a real RAG over his resume later, which doubles as a showcase of his work.</li>
+      <li><b>Scroll-spy sub-nav</b> with icons; education and community lists.</li>
+    </ul>
+    <div><span class="tag b">@chenglou/pretext</span><span class="tag b">matter-js</span><span class="tag b">ai (Vercel AI SDK)</span><span class="tag">placeholders: portrait, Q&amp;A answers</span></div>
+  </article>
+
+  <article class="page">
+    <header><h3>Work + case studies</h3><span class="mono">/work/sap · /work/mihin</span></header>
+    <div class="hero-moment"><b>signature moment</b><p><span class="mark">A live pipeline diagram you can poke.</span> The agent or RAG graph is drawn with nodes and edges. Tokens flow along the edges, clicking a node opens what it does, and a "▶ Run" button plays a request end to end.</p></div>
+    <ul>
+      <li><b>Before/after slider:</b> drag the handle between the old 3-hop GPT trace and the new adapter trace. The latency counter follows.</li>
+      <li><b>Trace replay:</b> spans fill in at a scaled real speed, with a timer readout.</li>
+      <li><b>Code with notes:</b> highlighted snippets where hovering a line shows a margin note (her "margin tip", applied to code).</li>
+      <li><b>Nested sticky table of contents</b> with scroll-spy, numbered sections and a meta grid at the top.</li>
+    </ul>
+    <div><span class="tag b">@xyflow/react</span><span class="tag b">shiki</span><span class="tag b">motion</span><span class="tag">placeholders: diagrams for each project</span></div>
+  </article>
+
+  <article class="page">
+    <header><h3>Projects</h3><span class="mono">/projects</span></header>
+    <div class="hero-moment"><b>signature moment</b><p><span class="mark">A terminal you can actually type in.</span> Each project has a fake but fun CLI. <code>orchestrator run "book a flight"</code> streams the router picking tools out of 191.</p></div>
+    <ul>
+      <li><b>Showcase layout:</b> a list on the left and a live preview on the right that auto-advances with a progress ring and pauses on hover.</li>
+      <li><b>Fanning 3D panes</b> when you pick a project: code, demo and README spread apart.</li>
+      <li><b>Agentic Tool Orchestrator, TB detection (IEEE), Polymarket bot</b>, plus empty slots for more.</li>
+    </ul>
+    <div><span class="tag b">xterm.js or a small custom terminal</span><span class="tag b">motion</span><span class="tag">placeholders: 3+ projects</span></div>
+  </article>
+
+  <article class="page">
+    <header><h3>Notes</h3><span class="mono">/notes</span></header>
+    <div class="hero-moment"><b>signature moment</b><p><span class="mark">Interactive figures inside the essays.</span> For example, in the embeddings note you drag a query point around a 2D map and its nearest neighbors light up. Splitting the fields visibly improves the recall.</p></div>
+    <ul>
+      <li><b>A reading progress bar measured in tokens</b> ("1,204 / 3,980 tokens") instead of a percentage.</li>
+      <li><b>Hand-drawn highlights</b> that draw themselves as each paragraph scrolls in.</li>
+      <li><b>Three note stubs</b> from his bullet bank: distillation and gold labels, the embedding mistake, and agents writing to production.</li>
+    </ul>
+    <div><span class="tag b">MDX</span><span class="tag b">d3-scale / d3-force</span><span class="tag b">rough-notation</span><span class="tag">placeholders: essay text</span></div>
+  </article>
+
+  <article class="page">
+    <header><h3>Resume, 404, and small pages</h3><span class="mono">/resume · /404 · /site-info</span></header>
+    <div class="hero-moment"><b>signature moment</b><p><span class="mark">The 404 page is a hallucination.</span> "The model made up this URL." Hitting ↻ Regenerate suggests a real page instead.</p></div>
+    <ul>
+      <li><b>Resume:</b> a crisp PDF view with a short "compiling…" animation, like LaTeX building, plus download and copy-link buttons.</li>
+      <li><b>Site info:</b> a colophon listing the fonts, libraries, build time and a Lighthouse score, written like a <code>package.json</code>.</li>
+    </ul>
+    <div><span class="tag b">react-pdf or a plain embed</span></div>
+  </article>
+</section>
+
+<section id="space">
+  <div class="eyebrow">05 · use of space</div>
+  <h2>Her spacing, as rules we can reuse</h2>
+  <div class="page">
+    <ul>
+      <li><b>One container:</b> 1440px max, 40px gutters (20px on mobile). Inner pages use a 200px sticky index, a 72px gap and a reading column of 520–620px.</li>
+      <li><b>Large rhythm:</b> 160px between home sections, 64px between items in a section, and 224px of space above the hero on desktop. The empty space is part of the design.</li>
+      <li><b>Small rhythm:</b> a 4px base. Labels sit 8px above their values, cards use 20–28px of padding, and tight groups use 12–16px gaps.</li>
+      <li><b>One idea per screen:</b> each section fits about one viewport, with one strong element (a card, a quote row or a graph) and a quiet label.</li>
+      <li><b>Hierarchy without boxes:</b> weight, size and color carry it. Cards are flat fills or 1px outlines, and shadows only appear on things that float.</li>
+      <li><b>Reading width:</b> about 65 characters for prose and 20–28 words per tagline. Headlines use <code>text-wrap: balance</code>.</li>
+    </ul>
+  </div>
+</section>
+
+<section id="libs">
+  <div class="eyebrow">06 · free libraries</div>
+  <h2>What does the heavy lifting</h2>
+  <p class="lede">Everything here is free. I checked the ones marked ⚑ for this plan; the rest are long-standing open-source packages. We should confirm each license once more before shipping.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>Library</th><th>Used for</th><th>License / cost</th></tr></thead>
+    <tbody>
+      <tr><td>motion</td><td>Springs, drag, layout animation, the cursor trail, magnetic buttons, sheet transitions</td><td class="mono">MIT</td></tr>
+      <tr><td>gsap ⚑</td><td>SplitText (word and letter splits), ScrambleText, DrawSVG for line-draw illustrations, MorphSVG</td><td class="mono">Free including commercial use, all plugins (GSAP license, not MIT)</td></tr>
+      <tr><td>@chenglou/pretext ⚑</td><td>Text that rewraps around the dragged portrait on About</td><td class="mono">Open source, about 15KB, early version (0.0.x)</td></tr>
+      <tr><td>@paper-design/shaders-react ⚑</td><td>Grain-gradient shader behind the hero and footer</td><td class="mono">Free; check the license before shipping</td></tr>
+      <tr><td>@number-flow/react</td><td>Before → after numbers that roll digit by digit</td><td class="mono">MIT</td></tr>
+      <tr><td>rough-notation</td><td>Hand-drawn highlights, underlines and circles that animate in</td><td class="mono">MIT</td></tr>
+      <tr><td>@xyflow/react</td><td>Interactive pipeline and agent diagrams in case studies</td><td class="mono">MIT</td></tr>
+      <tr><td>matter-js</td><td>The physics tool shelf on About and the badge toss on Home</td><td class="mono">MIT</td></tr>
+      <tr><td>cmdk</td><td>⌘K command palette</td><td class="mono">MIT</td></tr>
+      <tr><td>sonner</td><td>"Copied" toasts (the same kind of library she uses)</td><td class="mono">MIT</td></tr>
+      <tr><td>shiki</td><td>Code highlighting in case studies and notes</td><td class="mono">MIT</td></tr>
+      <tr><td>ai (Vercel AI SDK)</td><td>The streaming "Ask Rohan" chat</td><td class="mono">Apache-2.0; model API costs extra</td></tr>
+      <tr><td>PartyKit or Supabase Realtime</td><td>Live presence count</td><td class="mono">Free tiers</td></tr>
+      <tr><td>lenis</td><td>Optional smooth scrolling, only if it feels right</td><td class="mono">MIT</td></tr>
+      <tr><td>use-sound</td><td>Optional UI ticks</td><td class="mono">MIT</td></tr>
+      <tr><td>lucide-react</td><td>Outline icons</td><td class="mono">ISC</td></tr>
+      <tr><td>React Bits ⚑ · Motion Primitives</td><td>Copy-paste reference for text effects, cursors and backgrounds, adapted to our tokens</td><td class="mono">Free; one fork claims MIT + Commons Clause, so check the official repo</td></tr>
+    </tbody>
+  </table></div>
+  <p class="note-src">Checked: <a href="https://hermes-agent.nousresearch.com/docs/user-guide/skills/bundled/creative/creative-pretext">pretext docs</a> · <a href="https://npmjs.com/package/gsap-trial">GSAP free-plugins notice</a> · <a href="https://shaders.paper.design/grain-gradient">Paper Shaders grain gradient</a> · <a href="https://github.com/Pareder/react-bits">React Bits</a></p>
+</section>
+
+<section id="phases">
+  <div class="eyebrow">07 · build order</div>
+  <h2>Foundation first, then one page at a time</h2>
+  <div class="page" style="gap:0">
+    <div class="phase"><span class="n">phase 0</span><div><h3>Foundation</h3><p>Next.js, Tailwind v4 tokens, fonts, grain, the layout shell, the top bar, the sheet and footer reveal, the cursor system, page transitions and a reduced-motion switch. All pages exist with placeholder copy.</p></div></div>
+    <div class="phase"><span class="n">phase 1</span><div><h3>Home</h3><p>Streaming tagline, status line, badge pile, work cards with traces and counters, project previews, notes cards, and the footer graph.</p></div></div>
+    <div class="phase"><span class="n">phase 2</span><div><h3>About</h3><p>Portrait reflow, git-log timeline, physics tool shelf, and canned Ask Rohan answers.</p></div></div>
+    <div class="phase"><span class="n">phase 3</span><div><h3>Work</h3><p>One full case study (SAP fine-tuning) with the pipeline diagram, before/after slider and trace replay, plus a MiHIN shell.</p></div></div>
+    <div class="phase"><span class="n">phase 4</span><div><h3>Projects, Notes, Resume, 404</h3><p>Terminal moments, interactive figures, compiling resume, and the hallucination 404.</p></div></div>
+    <div class="phase"><span class="n">phase 5</span><div><h3>Live layer</h3><p>Presence, ⌘K, the real RAG behind Ask Rohan, and optional sound.</p></div></div>
+  </div>
+</section>
+
+<section id="budget">
+  <div class="eyebrow">08 · guardrails</div>
+  <h2>So it stays fast and kind</h2>
+  <div class="page"><ul>
+    <li><b>Lazy-load the heavy pieces</b> (physics, diagrams, Pretext, shaders, terminal) per page, and only when visible. Target under about 180KB of JS on first load.</li>
+    <li><b>Mouse-only effects</b> sit behind <code>@media (hover: hover) and (pointer: fine)</code>. Touch gets taps and the dock.</li>
+    <li><b>Reduced motion:</b> every effect has a still end state, as on her site.</li>
+    <li><b>Keyboard:</b> everything draggable also works with arrow keys, and every moment has a visible focus ring.</li>
+    <li><b>Every page is complete at rest:</b> the content reads fine before any animation runs.</li>
+  </ul></div>
+  <div class="ask"><h3>Before phase 0</h3><ol>
+    <li>Do the six sketches above feel right, or are any too much?</li>
+    <li>Ask Rohan: canned answers only, or plan for a real RAG (it costs a little per question)?</li>
+    <li>Badge pile on Home: yes, or keep Home calmer?</li>
+  </ol></div>
+</section>
+</main>
+</div>
+
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const fine = matchMedia('(hover: hover) and (pointer: fine)').matches;
+
+  // toc scroll spy
+  const links=[...document.querySelectorAll('.toc a')];
+  const io=new IntersectionObserver(es=>es.forEach(e=>{ if(e.isIntersecting){ links.forEach(a=>a.classList.toggle('on',a.getAttribute('href')==='#'+e.target.id)); } }),{rootMargin:'-40% 0px -55% 0px'});
+  document.querySelectorAll('main section[id]').forEach(s=>io.observe(s));
+
+  // streaming tagline
+  const lines=["I turn 90-second pipelines into 11-second ones.","I fine-tune models, then make them cheap.","I give LLMs tools, and keep them honest.","I build knowledge graphs people can talk to.","I also hallucinate sometimes. Rarely in prod."];
+  const out=document.getElementById('stream'); let li=0, busy=false;
+  const stream=async(t)=>{ busy=true; out.innerHTML=''; const toks=t.match(/\S+\s*/g);
+    for(const k of toks){ const s=document.createElement('span'); s.className='tok'; s.textContent=k; out.appendChild(s); if(!reduce) await new Promise(r=>setTimeout(r,60+Math.random()*110)); }
+    const c=document.createElement('span'); c.className='caret'; out.appendChild(c); busy=false; };
+  stream(lines[0]);
+  document.getElementById('regen').onclick=()=>{ if(busy) return; li=(li+1)%lines.length; stream(lines[li]); };
+
+  // cursor prompt
+  const cur=document.getElementById('cur'), lbl=document.getElementById('curlbl');
+  let tx=0,ty=0,cx=0,cy=0,timer;
+  if (fine) {
+    addEventListener('pointermove',e=>{tx=e.clientX;ty=e.clientY;});
+    const loop=()=>{ cx+=(tx-cx)*(reduce?1:.22); cy+=(ty-cy)*(reduce?1:.22); cur.style.transform=`translate(${cx-5}px,${cy-5}px)`; requestAnimationFrame(loop); }; loop();
+    document.querySelectorAll('#zone [data-prompt]').forEach(el=>{
+      el.addEventListener('pointerenter',()=>{ cur.style.opacity=1; clearInterval(timer); const w=el.dataset.prompt.split(' '); let n=0; lbl.textContent=''; timer=setInterval(()=>{ lbl.textContent=w.slice(0,++n).join(' '); if(n>=w.length) clearInterval(timer); }, reduce?0:110); });
+      el.addEventListener('pointerleave',()=>{ cur.style.opacity=0; clearInterval(timer); });
+    });
+  } else {
+    document.querySelectorAll('#zone [data-prompt]').forEach(el=>el.textContent=el.dataset.prompt);
+  }
+
+  // counter
+  const num=document.getElementById('num');
+  document.getElementById('run').onclick=()=>{ const from=90,to=11,dur=reduce?0:1400,t0=performance.now();
+    const f=(t)=>{ const p=dur?Math.min(1,(t-t0)/dur):1; const e=1-Math.pow(1-p,4); num.textContent=(from+(to-from)*e).toFixed(1); if(p<1) requestAnimationFrame(f); }; requestAnimationFrame(f); };
+
+  // magnetic
+  const mag=document.getElementById('mag'), mw=document.getElementById('magwrap');
+  if (fine && !reduce) {
+    mw.addEventListener('pointermove',e=>{ const r=mag.getBoundingClientRect(); const dx=e.clientX-(r.left+r.width/2), dy=e.clientY-(r.top+r.height/2); mag.style.transform=`translate(${dx*.25}px,${dy*.35}px)`; });
+    mw.addEventListener('pointerleave',()=>mag.style.transform='');
+  }
+
+  // tile pop
+  const tg=document.getElementById('tgrid'), tiles=document.getElementById('tiles');
+  const build=()=>{ tg.innerHTML=''; for(let i=0;i<40;i++){ const t=document.createElement('i'); const c=i%8, r=Math.floor(i/8); t.style.animationDelay=(c*35+r*45+Math.random()*60)+'ms'; t.style.setProperty('--r',(Math.random()*40-20)+'deg'); tg.appendChild(t);} tiles.classList.remove('go'); };
+  const play=()=>{ build(); setTimeout(()=>tiles.classList.add('go'), reduce?0:500); };
+  play(); document.getElementById('reload').onclick=play;
+
+  // grain toggle
+  const gb=document.getElementById('grainbtn');
+  gb.onclick=()=>{ const off=document.body.classList.toggle('nograin'); gb.textContent='Grain: '+(off?'off':'on'); gb.setAttribute('aria-pressed',String(!off)); };
+
+  // footer: per-letter email + graph with message passing
+  const mail=document.getElementById('mail');
+  [...'waghmarerohan30@gmail.com'].forEach(ch=>{ const s=document.createElement('span'); s.textContent=ch; s.setAttribute('aria-hidden','true'); mail.appendChild(s); });
+  const cv=document.getElementById('graph'), ctx=cv.getContext('2d'), box=document.getElementById('night');
+  let W,H,P=[],E=[],m={x:-999,y:-999},pulses=[];
+  const size=()=>{ const r=cv.getBoundingClientRect(), d=devicePixelRatio||1; W=r.width;H=r.height; cv.width=W*d; cv.height=H*d; ctx.setTransform(d,0,0,d,0,0);
+    P=[]; const gap=42; for(let y=gap/2;y<H;y+=gap) for(let x=gap/2;x<W;x+=gap) P.push({x:x+(Math.random()-.5)*22,y:y+(Math.random()-.5)*22,glow:0});
+    E=[]; P.forEach((a,i)=>P.forEach((b,j)=>{ if(j>i && Math.hypot(a.x-b.x,a.y-b.y)<52 && Math.random()<.55) E.push([i,j]); })); };
+  box.addEventListener('pointermove',e=>{ const r=cv.getBoundingClientRect(); m.x=e.clientX-r.left; m.y=e.clientY-r.top; });
+  box.addEventListener('pointerleave',()=>{m.x=m.y=-999;});
+  box.addEventListener('pointerdown',e=>{ const r=cv.getBoundingClientRect(); const x=e.clientX-r.left,y=e.clientY-r.top; let best=0,bd=1e9; P.forEach((p,i)=>{const d=Math.hypot(p.x-x,p.y-y); if(d<bd){bd=d;best=i;}}); const seen=new Set([best]); pulses.push({frontier:[best],seen,t:0}); });
+  const draw=()=>{ ctx.clearRect(0,0,W,H);
+    P.forEach(p=>{ const d=Math.hypot(p.x-m.x,p.y-m.y); const target=d<120?1-d/120:0; p.glow+= (target-p.glow)*.12; });
+    pulses.forEach(pl=>{ pl.t++; if(pl.t%6===0){ const nf=[]; pl.frontier.forEach(i=>E.forEach(([a,b])=>{ const n=a===i?b:b===i?a:-1; if(n>=0&&!pl.seen.has(n)&&Math.random()<.7){pl.seen.add(n);nf.push(n);P[n].glow=1;} })); pl.frontier=nf; } });
+    pulses=pulses.filter(p=>p.frontier.length);
+    E.forEach(([a,b])=>{ const g=Math.max(P[a].glow,P[b].glow); ctx.strokeStyle=`rgba(140,152,255,${.05+g*.55})`; ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(P[a].x,P[a].y); ctx.lineTo(P[b].x,P[b].y); ctx.stroke(); });
+    P.forEach(p=>{ ctx.fillStyle=p.glow>.05?`rgba(140,152,255,${.35+p.glow*.65})`:'rgba(233,234,243,.25)'; ctx.beginPath(); ctx.arc(p.x,p.y,1.3+p.glow*1.8,0,7); ctx.fill(); if(!reduce) p.glow*=.985; });
+    requestAnimationFrame(draw); };
+  size(); draw(); addEventListener('resize',size);
+})();
+</script>

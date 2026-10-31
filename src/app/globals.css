@@ -1,0 +1,224 @@
+@import "tailwindcss";
+
+/* Design tokens. White paper + grain, graphite ink, one ink-blue accent.
+   The Golden Gate orange is reserved for the bridge icon only. */
+@theme inline {
+  --color-paper: #ffffff;
+  --color-card: #f2f2ef;
+  --color-card-2: #ebebe7;
+  --color-line: #e4e4df;
+  --color-ink: #1b1e24;
+  --color-ink-2: #343842;
+  --color-muted: #6a6f78;
+  --color-faint: #9a9ea6;
+  --color-blue: #2f3fd1;
+  --color-blue-fill: #e7e9fb;
+  --color-hl: #ffe36a;
+  --color-night: #12152a;
+  --color-night-ink: #e9eaf3;
+  --color-night-blue: #8c98ff;
+  --color-bridge: #d9532b;
+  --color-ok: #2e8b57;
+
+  --font-serif: var(--font-newsreader), "Iowan Old Style", Georgia, serif;
+  --font-sans: var(--font-geist), -apple-system, "Segoe UI", system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-pop: cubic-bezier(0.2, 0.9, 0.25, 1.12);
+}
+
+:root {
+  color-scheme: light;
+  --gutter: 20px;
+  --footer-h: 400px;
+}
+@media (min-width: 768px) {
+  :root {
+    --gutter: 40px;
+    --footer-h: 480px;
+  }
+}
+
+html {
+  background: var(--color-paper);
+  -webkit-tap-highlight-color: transparent;
+}
+body {
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+::selection {
+  background: var(--color-hl);
+  color: var(--color-ink);
+}
+
+h1,
+h2,
+h3 {
+  text-wrap: balance;
+}
+
+/* One focus ring everywhere */
+:where(a, button, input, textarea, select, summary, [role="button"], [tabindex]:not([tabindex="-1"])):focus-visible {
+  outline: 2px solid var(--color-blue);
+  outline-offset: 2px;
+}
+
+/* Paper grain: fixed SVG noise over the whole page, multiplied onto white. */
+.paper-grain {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483000;
+  pointer-events: none;
+  opacity: 0.16;
+  mix-blend-mode: multiply;
+  background-size: 220px 220px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.11  0 0 0 0 0.12  0 0 0 0 0.15  0 0 0 1.4 -0.2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Progressive blur behind the top bar: six layers, each masked to a band. */
+.top-bar-glass {
+  position: absolute;
+  inset: 0 0 auto;
+  height: 120px;
+  z-index: -1;
+  pointer-events: none;
+}
+.top-bar-glass span {
+  position: absolute;
+  inset: 0;
+}
+.top-bar-glass span:nth-child(1) {
+  backdrop-filter: blur(1px);
+  mask-image: linear-gradient(#0000 62.5%, #000 75% 87.5%, #0000 100%);
+}
+.top-bar-glass span:nth-child(2) {
+  backdrop-filter: blur(2px);
+  mask-image: linear-gradient(#0000 50%, #000 62.5% 75%, #0000 87.5%);
+}
+.top-bar-glass span:nth-child(3) {
+  backdrop-filter: blur(4px);
+  mask-image: linear-gradient(#0000 37.5%, #000 50% 62.5%, #0000 75%);
+}
+.top-bar-glass span:nth-child(4) {
+  backdrop-filter: blur(8px);
+  mask-image: linear-gradient(#0000 25%, #000 37.5% 50%, #0000 62.5%);
+}
+.top-bar-glass span:nth-child(5) {
+  backdrop-filter: blur(16px);
+  mask-image: linear-gradient(#0000 12.5%, #000 25% 37.5%, #0000 50%);
+}
+.top-bar-glass span:nth-child(6) {
+  backdrop-filter: blur(32px);
+  mask-image: linear-gradient(#000 0% 25%, #0000 37.5%);
+}
+.top-bar > :not(.top-bar-glass),
+.top-bar .top-bar-glass > span {
+  transition: opacity 0.3s var(--ease-out-soft);
+}
+.top-bar[data-tucked] > :not(.top-bar-glass),
+.top-bar[data-tucked] .top-bar-glass > span {
+  opacity: 0;
+  pointer-events: none;
+}
+.top-bar[data-tucked]:has(:focus-visible) > :not(.top-bar-glass),
+.top-bar[data-tucked]:has(:focus-visible) .top-bar-glass > span {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Highlighter mark under key phrases */
+.mark {
+  background-image: linear-gradient(transparent 52%, rgb(255 215 64 / 0.55) 52%, rgb(255 215 64 / 0.55) 92%, transparent 92%);
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+  padding-inline: 0.06em;
+}
+
+/* Striped placeholder surface for content that is not written yet */
+.placeholder-stripes {
+  background-image: repeating-linear-gradient(135deg, var(--color-card) 0 7px, var(--color-card-2) 7px 14px);
+}
+
+/* Profile photo blooms in */
+.avatar-bloom {
+  animation: avatar-bloom 0.7s var(--ease-pop) backwards;
+}
+@keyframes avatar-bloom {
+  from {
+    opacity: 0;
+    transform: scale(0.55) rotate(-16deg);
+  }
+}
+
+/* Golden Gate cables draw themselves in after the photo lands */
+.bridge-draw path {
+  stroke-dasharray: var(--len, 40);
+  stroke-dashoffset: var(--len, 40);
+  animation: bridge-draw 0.9s var(--ease-out-soft) forwards;
+  animation-delay: var(--d, 0.6s);
+}
+@keyframes bridge-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes pop-in {
+  from {
+    opacity: 0;
+    transform: scale(0.94) translateY(-4px);
+  }
+}
+
+/* Live status dot */
+.heartbeat {
+  animation: heartbeat 2.4s var(--ease-out-soft) infinite;
+}
+@keyframes heartbeat {
+  50% {
+    transform: scale(1.2);
+  }
+}
+
+/* Page transitions (React <ViewTransition>) */
+::view-transition-old(.page) {
+  animation: 160ms ease-in both page-out;
+}
+::view-transition-new(.page) {
+  animation: 320ms var(--ease-out-soft) 120ms both page-in;
+}
+@keyframes page-out {
+  to {
+    opacity: 0;
+    filter: blur(3px);
+  }
+}
+@keyframes page-in {
+  from {
+    opacity: 0;
+    filter: blur(3px);
+    transform: translateY(10px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .bridge-draw path {
+    stroke-dashoffset: 0;
+  }
+  ::view-transition-old(.page),
+  ::view-transition-new(.page) {
+    animation: none;
+  }
+}
