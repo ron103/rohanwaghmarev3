@@ -80,12 +80,19 @@ export function NodeMark({ accent = "var(--color-blue)", ...props }: IconProps &
 /** Placeholder doodle of Rohan. Gets redrawn from his real photo later. */
 export function DoodleLogo(props: IconProps) {
   return (
-    <svg viewBox="0 0 44 44" aria-hidden="true" {...props}>
+    // viewBox is cropped to the drawing so the face sits flush with the page gutter.
+    <svg viewBox="5 3.2 37 37" aria-hidden="true" {...props}>
       <circle cx="22" cy="24" r="15" fill="#fff" stroke="var(--color-ink)" strokeWidth={2.2} />
       <path d="M8.5 20c2-8 8-12 14-12s11.5 3.5 13.5 11c-5-1-9-4-11-7-3 4-9 7-16.5 8z" fill="var(--color-ink)" />
-      <circle cx="17" cy="25" r="1.8" fill="var(--color-ink)" />
-      <circle cx="27" cy="25" r="1.8" fill="var(--color-ink)" />
-      <path d="M18.5 31c2 1.6 5 1.6 7 0" stroke="var(--color-ink)" strokeWidth={1.8} fill="none" strokeLinecap="round" />
+      <circle cx="17" cy="25" r="1.6" fill="var(--color-ink)" />
+      <circle cx="27" cy="25" r="1.6" fill="var(--color-ink)" />
+      {/* Rohan's glasses */}
+      <g fill="none" stroke="var(--color-ink)" strokeWidth={1.5}>
+        <rect x="12.6" y="21.8" width="8.4" height="6.2" rx="1.8" />
+        <rect x="23" y="21.8" width="8.4" height="6.2" rx="1.8" />
+        <path d="M21 24.2c.6-.5 1.4-.5 2 0" />
+      </g>
+      <path d="M18.5 31.6c2 1.6 5 1.6 7 0" stroke="var(--color-ink)" strokeWidth={1.8} fill="none" strokeLinecap="round" />
       <circle cx="14" cy="29" r="1.6" fill="#f2b8b0" opacity={0.8} />
       <circle cx="30" cy="29" r="1.6" fill="#f2b8b0" opacity={0.8} />
       <g transform="translate(30 3)">

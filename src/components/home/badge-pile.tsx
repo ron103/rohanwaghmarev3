@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { animate, motion, useMotionValue, useReducedMotion } from "motion/react";
 import clsx from "clsx";
 import { GoldenGateIcon, NodeMark } from "../icons";
+import { Portrait } from "../portrait";
 
 type Badge = {
   id: string;
@@ -37,7 +38,7 @@ const badges: Badge[] = [
           <span className="h-1.5 w-7 rounded-full bg-card-2" />
         </div>
         <div className="flex items-center gap-2.5">
-          <span className="placeholder-stripes size-9 rounded-full" />
+          <Portrait size={36} />
           <span className="grid leading-tight">
             <b className="text-[13px] font-semibold text-ink">Rohan W.</b>
             <span className="text-[10.5px] text-muted">AI · Palo Alto</span>
@@ -174,7 +175,7 @@ function Sticker({ badge, bounds, z, onFront }: { badge: Badge; bounds: React.Re
       initial={reduce ? false : { opacity: 0, scale: 0.6, rotate: badge.tilt - 18 }}
       animate={peeling ? { opacity: 0, rotate: badge.tilt + 28, scale: 1.08 } : { opacity: 1, scale: 1, rotate: badge.tilt }}
       transition={peeling ? { duration: 0.45, delay: 0.1 } : { type: "spring", stiffness: 260, damping: 18, delay: 0.25 + badges.indexOf(badge) * 0.07 }}
-      whileDrag={{ scale: 1.06, rotate: badge.tilt * 0.4, cursor: "grabbing" }}
+      whileDrag={{ scale: 1.06, rotate: badge.tilt * 0.4, cursor: "var(--cursor-grabbing)" }}
       style={{ x, y, left: `calc((100% - ${badge.w}px) * ${badge.x})`, top: badge.y, zIndex: z, touchAction: "none" }}
       className={clsx(
         "badge group absolute cursor-grab overflow-hidden bg-white p-1.5 [translate:0_0] hover:[translate:0_-4px] [transition:translate_.28s_var(--ease-out-soft),box-shadow_.3s] shadow-[0_1px_2px_rgba(0,0,0,0.08),0_6px_16px_-8px_rgba(0,0,0,0.28)] outline-offset-4 hover:shadow-[0_2px_4px_rgba(0,0,0,0.08),0_16px_28px_-12px_rgba(0,0,0,0.35)]",

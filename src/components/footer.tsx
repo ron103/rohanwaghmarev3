@@ -185,7 +185,8 @@ export function Footer() {
           ))}
         </button>
         <div className="pointer-events-auto flex flex-wrap items-center justify-between gap-4">
-          <div className="flex items-center gap-1">
+          {/* -ml offsets the icon boxes' padding so the first glyph lines up with the gutter. */}
+          <div className="-ml-[9px] flex items-center gap-1">
             <a className={social} href={site.links.linkedin} target="_blank" rel="noreferrer" aria-label="LinkedIn">
               <LinkedInIcon className="size-[17px]" />
             </a>

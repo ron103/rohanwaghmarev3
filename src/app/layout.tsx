@@ -27,25 +27,33 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: { default: site.name, template: `%s · ${site.name}` },
-  description: "Rohan Waghmare builds production AI systems: fine-tuned models, agents and retrieval, fast enough to ship.",
+  description:
+    "Rohan Waghmare builds production AI systems: fine-tuned models, agents and retrieval, fast enough to ship.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" className={`${newsreader.variable} ${geist.variable} ${geistMono.variable}`}>
+    <html
+      lang="en"
+      className={`${newsreader.variable} ${geist.variable} ${geistMono.variable}`}
+    >
       <body>
         <TopBar />
-        {/* The white sheet scrolls over the sticky night footer and reveals it. */}
-        <div className="relative z-[2] min-h-dvh rounded-b-[40px] bg-paper pb-28 shadow-[0_24px_50px_-24px_rgba(0,0,0,0.25),0_1px_0_rgba(0,0,0,0.05)] md:rounded-b-[64px] md:pb-36">
-          <main id="main">{children}</main>
+        {/* The white sheet scrolls over the sticky night footer and reveals it.
+            The night backdrop fills in behind the sheet's rounded corners. */}
+        <div className="bg-night">
+          <div className="relative z-[2] min-h-dvh rounded-b-[40px] bg-paper pb-28 shadow-[0_24px_50px_-24px_rgba(0,0,0,0.25),0_1px_0_rgba(0,0,0,0.05)] md:rounded-b-[64px] md:pb-36">
+            <main id="main">{children}</main>
+          </div>
+          <Footer />
         </div>
-        <Footer />
         <MobileDock />
         <CursorPrompt />
         <Toaster
           position="bottom-center"
           toastOptions={{
-            className: "!rounded-[14px] !border-0 !font-sans !shadow-[0_0_0_1px_rgba(0,0,0,0.06),0_16px_40px_-14px_rgba(0,0,0,0.25)]",
+            className:
+              "!rounded-[14px] !border-0 !font-sans !shadow-[0_0_0_1px_rgba(0,0,0,0.06),0_16px_40px_-14px_rgba(0,0,0,0.25)]",
           }}
         />
         <div className="paper-grain" aria-hidden="true" />

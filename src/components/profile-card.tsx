@@ -6,6 +6,7 @@ import { FileText } from "lucide-react";
 import { site, pacificTime, statusFor } from "@/lib/site";
 import { GitHubIcon, GoldenGateIcon, LinkedInIcon, XIcon } from "./icons";
 import { usePacificNow } from "./status";
+import { Portrait } from "./portrait";
 
 const iconLink =
   "group/tip relative grid size-8 place-items-center rounded-[8px] text-muted transition-colors duration-150 hover:text-blue";
@@ -67,17 +68,14 @@ function BridgeButton() {
 export function ProfileCard() {
   return (
     <aside className="grid content-center gap-3 border-t border-line pt-8 md:border-l md:border-t-0 md:pl-10 md:pt-0">
-      {/* Photo placeholder: swap for <Image src="/rohan.jpg" ... /> when the picture arrives. */}
-      <button
-        type="button"
+      <Link
+        href="/about"
         data-cursor="hi, that's me"
-        aria-label="Rohan's photo (placeholder)"
-        className="avatar-bloom placeholder-stripes grid size-[112px] place-items-center rounded-full text-center font-mono text-[10.5px] leading-tight text-faint shadow-[0_0_0_4px_#fff,0_0_0_5px_var(--color-line),0_10px_24px_-12px_rgba(0,0,0,0.3)] transition-transform duration-300 ease-[var(--ease-pop)] hover:-rotate-[4deg] hover:scale-[1.03]"
+        aria-label="About Rohan"
+        className="avatar-bloom block w-fit rounded-full shadow-[0_0_0_4px_#fff,0_0_0_5px_var(--color-line),0_10px_24px_-12px_rgba(0,0,0,0.3)] transition-transform duration-300 ease-[var(--ease-pop)] hover:-rotate-[4deg] hover:scale-[1.03]"
       >
-        your photo
-        <br />
-        goes here
-      </button>
+        <Portrait size={112} priority />
+      </Link>
       <h2 className="mt-3 text-[16px] font-semibold text-ink-2">Glad you found this</h2>
       <p className="max-w-[34ch] text-[15.5px] leading-[1.55] text-muted">
         I build AI systems that are fast enough to ship and honest enough to trust.

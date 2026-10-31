@@ -36,7 +36,7 @@ export function TopBar() {
   return (
     <header
       data-tucked={tucked || undefined}
-      className="top-bar fixed inset-x-0 top-0 z-50 grid grid-cols-[1fr_auto_1fr] items-center px-[var(--gutter)] pb-4 pt-[calc(env(safe-area-inset-top,0px)+20px)]"
+      className="top-bar fixed inset-x-0 top-0 z-50"
     >
       <div className="top-bar-glass" aria-hidden="true">
         <span />
@@ -47,47 +47,53 @@ export function TopBar() {
         <span />
       </div>
 
-      <Link
-        href="/"
-        aria-label="Home"
-        data-cursor="home"
-        className="group w-fit rounded-full"
-      >
-        <DoodleLogo className="avatar-bloom size-11 transition-transform duration-300 ease-[var(--ease-pop)] group-hover:-rotate-6 group-active:scale-95" />
-      </Link>
+      {/* Same 1440px column and gutter as the page, so edges line up. */}
+      <div className="mx-auto grid w-full max-w-[1440px] grid-cols-[1fr_auto_1fr] items-center px-[var(--gutter)] pb-4 pt-[calc(env(safe-area-inset-top,0px)+20px)]">
+        <Link
+          href="/"
+          aria-label="Home"
+          data-cursor="home"
+          className="group w-fit rounded-full"
+        >
+          <DoodleLogo className="avatar-bloom size-11 transition-transform duration-300 ease-[var(--ease-pop)] group-hover:-rotate-6 group-active:scale-95" />
+        </Link>
 
-      <div className="flex justify-center">
-        <nav aria-label="Primary" className="hidden items-center gap-1 md:flex">
-          {nav.map((item) => {
-            const active = isActive(pathname, item.href);
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                aria-current={active ? "page" : undefined}
-                className={clsx(
-                  "flex h-9 items-center gap-2 rounded-[10px] px-3 text-[15px] transition-[color,background-color,scale] duration-200 ease-out active:scale-[0.96]",
-                  active
-                    ? "text-ink"
-                    : "text-muted hover:bg-blue-fill hover:text-blue",
-                )}
-              >
-                {active && (
-                  <span
-                    aria-hidden="true"
-                    className="size-[7px] rotate-45 rounded-[2px] bg-blue"
-                  />
-                )}
-                {item.label}
-              </Link>
-            );
-          })}
-        </nav>
-      </div>
+        <div className="flex justify-center">
+          <nav
+            aria-label="Primary"
+            className="hidden items-center gap-1 md:flex"
+          >
+            {nav.map((item) => {
+              const active = isActive(pathname, item.href);
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  aria-current={active ? "page" : undefined}
+                  className={clsx(
+                    "flex h-9 items-center gap-2 rounded-[10px] px-3 text-[15px] transition-[color,background-color,scale] duration-200 ease-out active:scale-[0.96]",
+                    active
+                      ? "text-ink"
+                      : "text-muted hover:bg-blue-fill hover:text-blue",
+                  )}
+                >
+                  {active && (
+                    <span
+                      aria-hidden="true"
+                      className="size-[7px] rotate-45 rounded-[2px] bg-blue"
+                    />
+                  )}
+                  {item.label}
+                </Link>
+              );
+            })}
+          </nav>
+        </div>
 
-      <div className="flex items-center justify-end gap-3">
-        <StatusPill className="hidden lg:flex" />
-        <SayHi />
+        <div className="flex items-center justify-end gap-3">
+          <StatusPill className="hidden lg:flex" />
+          <SayHi />
+        </div>
       </div>
     </header>
   );
