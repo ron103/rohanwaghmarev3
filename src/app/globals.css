@@ -175,6 +175,90 @@ h3 {
   }
 }
 
+/* Badge page curl: a folded corner that grows on hover */
+.badge-curl {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 0;
+  height: 0;
+  border-top-left-radius: 8px;
+  background: linear-gradient(135deg, transparent 50%, #e4e4e7 50%, #fff 80%);
+  box-shadow: -2px -2px 6px rgb(0 0 0 / 0.12);
+  transition:
+    width 0.26s var(--ease-out-soft),
+    height 0.26s var(--ease-out-soft);
+}
+.badge-curl-round {
+  right: 12%;
+  bottom: 12%;
+}
+@media (hover: hover) {
+  .badge:hover .badge-curl {
+    width: 24px;
+    height: 24px;
+  }
+}
+
+/* Quote cards: words land from a blur, then the highlighter sweeps */
+@keyframes word-in {
+  from {
+    opacity: 0;
+    filter: blur(6px);
+    transform: translateY(0.18em);
+  }
+}
+.quote-mark {
+  background-image: linear-gradient(rgb(255 215 64 / 0.55), rgb(255 215 64 / 0.55));
+  background-repeat: no-repeat;
+  background-position: 0 88%;
+  background-size: 0% 40%;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+@keyframes quote-mark-in {
+  to {
+    background-size: 100% 40%;
+  }
+}
+.group:hover .quote-mark {
+  background-image: linear-gradient(rgb(255 215 64 / 0.8), rgb(255 215 64 / 0.8));
+}
+
+/* Tile-pop media reveal */
+@keyframes tile-pop {
+  18% {
+    filter: brightness(1.12);
+    transform: scale(1.08);
+  }
+  45% {
+    transform: scale(1.2) rotate(var(--tile-rot, 0deg));
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.2) rotate(var(--tile-rot, 0deg));
+  }
+}
+
+@keyframes span-grow {
+  from {
+    transform: scaleX(0);
+  }
+}
+
+/* Streaming text */
+@keyframes token-in {
+  from {
+    opacity: 0;
+    filter: blur(6px);
+  }
+}
+@keyframes caret {
+  50% {
+    opacity: 0;
+  }
+}
+
 /* Live status dot */
 .heartbeat {
   animation: heartbeat 2.4s var(--ease-out-soft) infinite;
