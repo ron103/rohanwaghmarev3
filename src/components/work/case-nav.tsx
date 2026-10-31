@@ -3,8 +3,9 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import clsx from "clsx";
+import { OrgLogo, type Org } from "../org-logo";
 
-type Item = { slug: string; company: string; role: string };
+type Item = { slug: string; company: string; role: string; logo: Org };
 
 /**
  * Left index for case studies: every company, with the current one expanded
@@ -40,7 +41,10 @@ export function CaseNav({ items, current, sections }: { items: Item[]; current: 
                 aria-current={open ? "page" : undefined}
                 className={clsx("grid leading-tight transition-colors", open ? "text-ink" : "text-faint hover:text-blue")}
               >
-                <span className="text-[15px] font-medium">{it.company}</span>
+                <span className="flex items-center gap-2 text-[15px] font-medium">
+                  <OrgLogo org={it.logo} size={16} className={open ? undefined : "opacity-60 grayscale"} />
+                  {it.company}
+                </span>
                 <span className={clsx("text-[12.5px]", open ? "text-muted" : "text-faint/80")}>{it.role}</span>
               </Link>
               {open && (

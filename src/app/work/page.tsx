@@ -3,6 +3,7 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { Page, PageHeader } from "@/components/page";
 import { caseStudies } from "@/content/work";
+import { OrgLogo } from "@/components/org-logo";
 
 export const metadata: Metadata = { title: "Work" };
 
@@ -28,7 +29,8 @@ export default function Work() {
               className="group grid gap-6 rounded-[20px] bg-card p-6 transition-colors duration-200 hover:bg-card-2 md:grid-cols-[minmax(0,1fr)_auto] md:items-end md:p-8"
             >
               <div className="grid gap-2">
-                <p className="flex flex-wrap items-baseline gap-x-2 text-[15px] font-semibold text-ink-2">
+                <p className="flex flex-wrap items-center gap-x-2 text-[15px] font-semibold text-ink-2">
+                  <OrgLogo org={c.logo} size={20} />
                   {c.company}
                   <span className="font-normal text-muted">· {c.role}</span>
                   <span className="font-mono text-[12px] font-normal text-faint">{c.timeline}</span>

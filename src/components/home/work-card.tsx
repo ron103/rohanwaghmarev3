@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import NumberFlow from "@number-flow/react";
 import clsx from "clsx";
+import { OrgLogo } from "../org-logo";
 
 type Span = { name: string; start: number; dur: number; label: string; hot?: boolean };
 
@@ -149,6 +150,7 @@ export function WorkCard() {
     >
       <div className="grid min-w-0 content-start gap-3">
         <p className="flex items-center gap-2 text-[15px] font-semibold text-ink-2">
+          <OrgLogo org="sap" size={20} />
           SAP Labs US
           <span className="rounded-[4px] bg-ink/5 px-1.5 py-0.5 font-mono text-[11px] font-medium text-muted">LLM · 2026</span>
         </p>

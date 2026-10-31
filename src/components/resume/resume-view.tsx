@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, type ReactNode } from "react";
-import { Check, Link2, Printer } from "lucide-react";
+import { Check, Download, Link2, Printer } from "lucide-react";
 import { toast } from "sonner";
 import clsx from "clsx";
 
@@ -18,7 +18,7 @@ const LOG = [
  * Plays a short LaTeX compile log, then reveals the typeset sheet. Shows once
  * per browser session; reduced motion skips straight to the sheet.
  */
-export function ResumeView({ children }: { children: ReactNode }) {
+export function ResumeView({ children, pdf }: { children: ReactNode; pdf?: string }) {
   const [lines, setLines] = useState(0);
   const [ready, setReady] = useState(false);
 
@@ -56,12 +56,24 @@ export function ResumeView({ children }: { children: ReactNode }) {
   return (
     <div className="grid gap-6">
       <div className="flex flex-wrap items-center gap-2 print:hidden">
+        {pdf && (
+          <a
+            href={pdf}
+            download
+            className="inline-flex h-10 items-center gap-2 rounded-full bg-ink px-4 text-[14px] font-medium text-white transition-[scale] active:scale-[0.97]"
+          >
+            <Download className="size-4" strokeWidth={1.8} /> Download PDF
+          </a>
+        )}
         <button
           type="button"
           onClick={() => window.print()}
-          className="inline-flex h-10 items-center gap-2 rounded-full bg-ink px-4 text-[14px] font-medium text-white transition-[scale] active:scale-[0.97]"
+          className={clsx(
+            "inline-flex h-10 items-center gap-2 rounded-full px-4 text-[14px] font-medium transition-[background-color,color,scale] active:scale-[0.97]",
+            pdf ? "bg-card text-ink-2 hover:bg-blue-fill hover:text-blue" : "bg-ink text-white",
+          )}
         >
-          <Printer className="size-4" strokeWidth={1.8} /> Save as PDF
+          <Printer className="size-4" strokeWidth={1.8} /> {pdf ? "Print" : "Save as PDF"}
         </button>
         <button
           type="button"

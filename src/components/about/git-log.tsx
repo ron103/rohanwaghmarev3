@@ -3,12 +3,14 @@
 import { useRef, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion, useScroll, useSpring } from "motion/react";
 import clsx from "clsx";
+import { OrgLogo, type Org } from "../org-logo";
 
 export type Commit = {
   hash: string;
   refs?: string[];
   when: string;
   company: string;
+  logo?: Org;
   role: string;
   place: string;
   diff: string[];
@@ -58,7 +60,8 @@ export function GitLog({ commits }: { commits: Commit[] }) {
                 ))}
                 <span className="ml-auto text-faint">{c.when}</span>
               </span>
-              <span className="text-[16px] font-semibold text-ink-2">
+              <span className="flex items-center gap-2 text-[16px] font-semibold text-ink-2">
+                {c.logo && <OrgLogo org={c.logo} size={20} />}
                 {c.company} <span className="font-normal text-muted">· {c.role}</span>
               </span>
               <span className="text-[13.5px] text-faint">{c.place}</span>

@@ -77,28 +77,44 @@ export function NodeMark({ accent = "var(--color-blue)", ...props }: IconProps &
   );
 }
 
-/** Placeholder doodle of Rohan. Gets redrawn from his real photo later. */
+/**
+ * Doodle of Rohan, drawn from his photo: full wavy hair swept to one side,
+ * thick rectangular glasses, round face, easy smile. The three-node mark sits
+ * where Anushriya's flower does.
+ */
 export function DoodleLogo(props: IconProps) {
+  const ink = "var(--color-ink)";
   return (
     // viewBox is cropped to the drawing so the face sits flush with the page gutter.
-    <svg viewBox="5 3.2 37 37" aria-hidden="true" {...props}>
-      <circle cx="22" cy="24" r="15" fill="#fff" stroke="var(--color-ink)" strokeWidth={2.2} />
-      <path d="M8.5 20c2-8 8-12 14-12s11.5 3.5 13.5 11c-5-1-9-4-11-7-3 4-9 7-16.5 8z" fill="var(--color-ink)" />
-      <circle cx="17" cy="25" r="1.6" fill="var(--color-ink)" />
-      <circle cx="27" cy="25" r="1.6" fill="var(--color-ink)" />
-      {/* Rohan's glasses */}
-      <g fill="none" stroke="var(--color-ink)" strokeWidth={1.5}>
-        <rect x="12.6" y="21.8" width="8.4" height="6.2" rx="1.8" />
-        <rect x="23" y="21.8" width="8.4" height="6.2" rx="1.8" />
-        <path d="M21 24.2c.6-.5 1.4-.5 2 0" />
+    <svg viewBox="7.4 1.6 41 41" aria-hidden="true" {...props}>
+      {/* ears */}
+      <path d="M10.4 26.2c-2.4-.2-3 3.9-.3 4.6" fill="#fff" stroke={ink} strokeWidth={1.8} strokeLinecap="round" />
+      <path d="M37.6 26.2c2.4-.2 3 3.9.3 4.6" fill="#fff" stroke={ink} strokeWidth={1.8} strokeLinecap="round" />
+      {/* face */}
+      <ellipse cx="24" cy="28" rx="13.6" ry="13.4" fill="#fff" stroke={ink} strokeWidth={2.2} />
+      {/* hair: full on top, fringe sweeping right */}
+      <path
+        d="M10.2 27.4C8.4 19.6 11.6 11.4 18.6 9.2c2.2-2.6 6.6-3.4 9.8-1.6 3.6-.4 7.2 1.8 8.6 5.4 2.4 3 2.6 8.4.8 13.4-.9-3.4-2.6-5.6-5-6.6-1.4 2.6-4.8 4-8.6 3.6 1.2-1.2 1.6-2.6 1.2-3.8-2.8 2.6-7.6 3.8-11.8 3.2-1.8 1.4-2.8 3-3.4 4.6z"
+        fill={ink}
+      />
+      <path d="M17.2 10.6c-1.6-1.4-1.4-3.4.4-4.2M24.4 7.4c.2-1.8 1.8-2.8 3.6-2.2" fill="none" stroke={ink} strokeWidth={1.4} strokeLinecap="round" />
+      {/* glasses: thick, rectangular */}
+      <g fill="#fff" stroke={ink} strokeWidth={2} strokeLinejoin="round">
+        <rect x="13.4" y="24.6" width="9" height="6.4" rx="1.6" />
+        <rect x="25.6" y="24.6" width="9" height="6.4" rx="1.6" />
       </g>
-      <path d="M18.5 31.6c2 1.6 5 1.6 7 0" stroke="var(--color-ink)" strokeWidth={1.8} fill="none" strokeLinecap="round" />
-      <circle cx="14" cy="29" r="1.6" fill="#f2b8b0" opacity={0.8} />
-      <circle cx="30" cy="29" r="1.6" fill="#f2b8b0" opacity={0.8} />
-      <g transform="translate(30 3)">
-        <path d="M2 9 8 3M2 9h6M8 3v6" stroke="var(--color-ink)" strokeWidth={1} />
-        <circle cx="2" cy="9" r="2" fill="var(--color-ink)" />
-        <circle cx="8" cy="3" r="2" fill="var(--color-ink)" />
+      <path d="M22.4 27h3.2" stroke={ink} strokeWidth={1.8} />
+      <circle cx="18" cy="28" r="1.25" fill={ink} />
+      <circle cx="30" cy="28" r="1.25" fill={ink} />
+      {/* smile */}
+      <path d="M19.4 34.4c2.4 2.3 6.8 2.3 9.2 0" fill="none" stroke={ink} strokeWidth={1.8} strokeLinecap="round" />
+      <circle cx="14.6" cy="33.2" r="1.5" fill="#f2b8b0" opacity={0.75} />
+      <circle cx="33.4" cy="33.2" r="1.5" fill="#f2b8b0" opacity={0.75} />
+      {/* node mark */}
+      <g transform="translate(34.6 2)">
+        <path d="M2 9 8 3M2 9h6M8 3v6" stroke={ink} strokeWidth={1} />
+        <circle cx="2" cy="9" r="2" fill={ink} />
+        <circle cx="8" cy="3" r="2" fill={ink} />
         <circle cx="8" cy="9" r="2.2" fill="var(--color-blue)" />
       </g>
     </svg>

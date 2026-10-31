@@ -6,6 +6,7 @@ import { animate, motion, useMotionValue, useReducedMotion } from "motion/react"
 import clsx from "clsx";
 import { GoldenGateIcon, NodeMark } from "../icons";
 import { Portrait } from "../portrait";
+import { OrgLogo } from "../org-logo";
 
 type Badge = {
   id: string;
@@ -34,7 +35,10 @@ const badges: Badge[] = [
     face: (
       <div className="grid h-full grid-rows-[auto_1fr_auto] p-3 text-left">
         <div className="flex items-center justify-between">
-          <span className="font-mono text-[9.5px] font-semibold tracking-[0.12em] text-blue">SAP LABS US</span>
+          <span className="flex items-center gap-1.5 font-mono text-[9.5px] font-semibold tracking-[0.12em] text-blue">
+            <OrgLogo org="sap" size={16} className="rounded-[4px]" />
+            LABS US
+          </span>
           <span className="h-1.5 w-7 rounded-full bg-card-2" />
         </div>
         <div className="flex items-center gap-2.5">
@@ -59,7 +63,10 @@ const badges: Badge[] = [
     className: "h-[100px] w-[156px]",
     face: (
       <div className="grid h-full grid-rows-[auto_1fr] text-left">
-        <div className="bg-[#0b5a43] px-3 py-1.5 font-mono text-[9px] font-semibold tracking-[0.1em] text-white">BINGHAMTON · MS CS</div>
+        <div className="flex items-center gap-1.5 bg-[#0b5a43] px-3 py-1.5 font-mono text-[9px] font-semibold tracking-[0.1em] text-white">
+          <OrgLogo org="binghamton" size={14} className="rounded-[3px] shadow-none" />
+          BINGHAMTON · MS CS
+        </div>
         <div className="grid content-center gap-1 px-3">
           <b className="font-serif text-[18px] font-medium leading-none text-ink">Class of &apos;25</b>
           <span className="text-[10.5px] text-muted">Computer Science</span>

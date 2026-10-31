@@ -1,9 +1,15 @@
 import type { Metadata } from "next";
+import { existsSync } from "node:fs";
+import { join } from "node:path";
 import { Page, PageHeader } from "@/components/page";
 import { ResumeView } from "@/components/resume/resume-view";
 import { resume } from "@/content/resume";
 
 export const metadata: Metadata = { title: "Resume" };
+
+// Drop the real PDF at public/rohan-waghmare-resume.pdf and a Download button appears.
+const PDF = "/rohan-waghmare-resume.pdf";
+const hasPdf = existsSync(join(process.cwd(), "public", PDF));
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
@@ -29,7 +35,7 @@ export default function Resume() {
       <div className="print:hidden">
         <PageHeader eyebrow="resume" title="The one-page version." lede="Typeset from the same source as my PDF. Save it as a PDF from your browser." />
       </div>
-      <ResumeView>
+      <ResumeView pdf={hasPdf ? PDF : undefined}>
         {/* The sheet: letter-size proportions, serif body like the LaTeX original. */}
         <article className="mx-auto grid w-full max-w-[816px] gap-4 bg-white px-[clamp(20px,6vw,56px)] py-[clamp(24px,6vw,52px)] font-serif text-[12.5px] leading-[1.45] text-ink shadow-[0_0_0_1px_rgba(0,0,0,0.06),0_30px_60px_-30px_rgba(0,0,0,0.35)] print:max-w-none print:p-0 print:text-[11px] print:shadow-none">
           <header className="grid gap-1 text-center">

@@ -14,7 +14,10 @@ type Node = { x: number; y: number; glow: number };
  * Night graph: a loose mesh of nodes. Nodes near the pointer light up and their
  * edges brighten. A click sends a "message" that hops outward edge by edge.
  */
-function useNodeGraph(canvasRef: React.RefObject<HTMLCanvasElement | null>, hostRef: React.RefObject<HTMLElement | null>) {
+function useNodeGraph(
+  canvasRef: React.RefObject<HTMLCanvasElement | null>,
+  hostRef: React.RefObject<HTMLElement | null>,
+) {
   useEffect(() => {
     const canvas = canvasRef.current;
     const host = hostRef.current;
@@ -22,7 +25,9 @@ function useNodeGraph(canvasRef: React.RefObject<HTMLCanvasElement | null>, host
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const reduce = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
     let nodes: Node[] = [];
     let edges: [number, number][] = [];
     let pulses: { frontier: number[]; seen: Set<number>; tick: number }[] = [];
@@ -48,11 +53,20 @@ function useNodeGraph(canvasRef: React.RefObject<HTMLCanvasElement | null>, host
       const gap = 46;
       nodes = [];
       for (let y = gap / 2; y < h; y += gap)
-        for (let x = gap / 2; x < w; x += gap) nodes.push({ x: x + (rand() - 0.5) * 26, y: y + (rand() - 0.5) * 26, glow: 0 });
+        for (let x = gap / 2; x < w; x += gap)
+          nodes.push({
+            x: x + (rand() - 0.5) * 26,
+            y: y + (rand() - 0.5) * 26,
+            glow: 0,
+          });
       edges = [];
       for (let i = 0; i < nodes.length; i++)
         for (let j = i + 1; j < nodes.length; j++)
-          if (Math.hypot(nodes[i].x - nodes[j].x, nodes[i].y - nodes[j].y) < 58 && rand() < 0.5) edges.push([i, j]);
+          if (
+            Math.hypot(nodes[i].x - nodes[j].x, nodes[i].y - nodes[j].y) < 58 &&
+            rand() < 0.5
+          )
+            edges.push([i, j]);
     };
 
     const draw = () => {
@@ -89,7 +103,10 @@ function useNodeGraph(canvasRef: React.RefObject<HTMLCanvasElement | null>, host
         ctx.stroke();
       }
       for (const n of nodes) {
-        ctx.fillStyle = n.glow > 0.05 ? `rgba(140,152,255,${0.35 + n.glow * 0.65})` : "rgba(233,234,243,0.22)";
+        ctx.fillStyle =
+          n.glow > 0.05
+            ? `rgba(140,152,255,${0.35 + n.glow * 0.65})`
+            : "rgba(233,234,243,0.22)";
         ctx.beginPath();
         ctx.arc(n.x, n.y, 1.3 + n.glow * 1.8, 0, Math.PI * 2);
         ctx.fill();
@@ -152,7 +169,8 @@ function useNodeGraph(canvasRef: React.RefObject<HTMLCanvasElement | null>, host
   }, [canvasRef, hostRef]);
 }
 
-const social = "grid size-9 place-items-center rounded-[10px] text-night-ink/60 transition-colors duration-150 hover:bg-white/10 hover:text-night-blue";
+const social =
+  "grid size-9 place-items-center rounded-[10px] text-night-ink/60 transition-colors duration-150 hover:bg-white/10 hover:text-night-blue";
 
 export function Footer() {
   const hostRef = useRef<HTMLElement>(null);
@@ -164,39 +182,70 @@ export function Footer() {
       ref={hostRef}
       className="sticky bottom-0 z-0 h-[var(--footer-h)] overflow-hidden bg-night text-night-ink"
     >
-      <canvas ref={canvasRef} aria-hidden="true" className="absolute inset-0 size-full" />
-      <div className="pointer-events-none relative mx-auto flex h-full max-w-[1440px] flex-col justify-end gap-6 px-[var(--gutter)] pb-[calc(env(safe-area-inset-bottom,0px)+96px)] md:pb-10">
-        <p className="font-mono text-[12px] text-night-ink/50">$ say-hi --to rohan</p>
-        <button
-          type="button"
-          onClick={copyEmail}
-          data-cursor="copy email"
-          aria-label={`Copy email ${site.email}`}
-          className="group pointer-events-auto w-fit text-left font-serif text-[clamp(30px,6.2vw,76px)] font-medium leading-[1.02] tracking-[-0.015em] [overflow-wrap:anywhere]"
-        >
-          {[...site.email].map((ch, i) => (
-            <span
-              key={i}
-              aria-hidden="true"
-              className="inline-block transition-[translate,color] duration-300 ease-[var(--ease-out-soft)] hover:-translate-y-2 hover:text-night-blue"
-            >
-              {ch}
-            </span>
-          ))}
-        </button>
+      <canvas
+        ref={canvasRef}
+        aria-hidden="true"
+        className="absolute inset-0 size-full"
+      />
+      <div className="pointer-events-none relative mx-auto flex h-full max-w-[1440px] flex-col gap-6 px-[var(--gutter)] pb-[calc(env(safe-area-inset-bottom,0px)+96px)] pt-16 md:pb-10">
+        {/* Email sits centred in the open space above the bottom row. */}
+        <div className="flex flex-1 flex-col items-center justify-center gap-4 text-center">
+          <p className="font-mono text-[12px] text-night-ink/50">
+            $ say-hi --to rohan
+          </p>
+          <button
+            type="button"
+            onClick={copyEmail}
+            data-cursor="copy email"
+            aria-label={`Copy email ${site.email}`}
+            className="group pointer-events-auto max-w-full text-center font-serif text-[clamp(30px,6.2vw,76px)] font-medium leading-[1.02] tracking-[-0.015em] [overflow-wrap:anywhere]"
+          >
+            {[...site.email].map((ch, i) => (
+              <span
+                key={i}
+                aria-hidden="true"
+                className="inline-block transition-[translate,color] duration-300 ease-[var(--ease-out-soft)] hover:-translate-y-2 hover:text-night-blue"
+              >
+                {ch}
+              </span>
+            ))}
+          </button>
+        </div>
         <div className="pointer-events-auto flex flex-wrap items-center justify-between gap-4">
           {/* -ml offsets the icon boxes' padding so the first glyph lines up with the gutter. */}
           <div className="-ml-[9px] flex items-center gap-1">
-            <a className={social} href={site.links.linkedin} target="_blank" rel="noreferrer" aria-label="LinkedIn">
+            <a
+              className={social}
+              href={site.links.linkedin}
+              target="_blank"
+              rel="noreferrer"
+              aria-label="LinkedIn"
+            >
               <LinkedInIcon className="size-[17px]" />
             </a>
-            <a className={social} href={site.links.x} target="_blank" rel="noreferrer" aria-label="X">
+            <a
+              className={social}
+              href={site.links.x}
+              target="_blank"
+              rel="noreferrer"
+              aria-label="X"
+            >
               <XIcon className="size-[15px]" />
             </a>
-            <a className={social} href={site.links.github} target="_blank" rel="noreferrer" aria-label="GitHub">
+            <a
+              className={social}
+              href={site.links.github}
+              target="_blank"
+              rel="noreferrer"
+              aria-label="GitHub"
+            >
               <GitHubIcon className="size-[17px]" />
             </a>
-            <Link className={social} href={site.links.resume} aria-label="Resume">
+            <Link
+              className={social}
+              href={site.links.resume}
+              aria-label="Resume"
+            >
               <FileText className="size-[17px]" strokeWidth={1.6} />
             </Link>
           </div>

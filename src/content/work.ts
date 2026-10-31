@@ -30,6 +30,7 @@ export type Section =
 export type CaseStudy = {
   slug: string;
   company: string;
+  logo: "sap" | "mihin";
   badge?: string;
   role: string;
   timeline: string;
@@ -47,6 +48,7 @@ export const caseStudies: CaseStudy[] = [
   {
     slug: "sap",
     company: "SAP Labs US",
+    logo: "sap",
     badge: "LLM · 2026",
     role: "Software Developer, AI",
     timeline: "Jan 2026 – Present",
@@ -186,6 +188,7 @@ export const caseStudies: CaseStudy[] = [
   {
     slug: "mihin",
     company: "MiHIN",
+    logo: "mihin",
     role: "Software Engineer",
     timeline: "Mar 2025 – Jan 2026",
     place: "Binghamton, NY",

@@ -9,6 +9,7 @@ import { Pipeline } from "@/components/work/pipeline";
 import { TraceCompare } from "@/components/work/trace-compare";
 import { AnnotatedCode } from "@/components/work/annotated-code";
 import { caseStudies, getCaseStudy, type CaseStudy, type Section } from "@/content/work";
+import { OrgLogo } from "@/components/org-logo";
 
 export function generateStaticParams() {
   return caseStudies.map((c) => ({ slug: c.slug }));
@@ -95,7 +96,7 @@ async function CaseStudyContent({ params }: { params: PageProps<"/work/[slug]">[
   return (
     <>
       <CaseNav
-        items={caseStudies.map(({ slug, company, role }) => ({ slug, company, role }))}
+        items={caseStudies.map(({ slug, company, role, logo }) => ({ slug, company, role, logo }))}
         current={c.slug}
         sections={c.sections.map((s) => ({ id: s.id, label: navLabel(s) }))}
       />
@@ -104,6 +105,7 @@ async function CaseStudyContent({ params }: { params: PageProps<"/work/[slug]">[
         {/* Header */}
         <header className="grid gap-8">
           <p className="flex items-center gap-2 text-[15px] font-semibold text-ink-2">
+            <OrgLogo org={c.logo} size={22} />
             {c.company}
             {c.badge && <span className="rounded-[4px] bg-ink/5 px-1.5 py-0.5 font-mono text-[11px] font-medium text-muted">{c.badge}</span>}
           </p>

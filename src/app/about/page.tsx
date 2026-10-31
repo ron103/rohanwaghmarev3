@@ -9,6 +9,7 @@ import { GitLog, type Commit } from "@/components/about/git-log";
 import { ToolShelf, type Tool } from "@/components/about/tool-shelf";
 import { AskRohan, type QA } from "@/components/about/ask-rohan";
 import { site } from "@/lib/site";
+import { OrgLogo } from "@/components/org-logo";
 
 export const metadata: Metadata = { title: "About" };
 
@@ -51,6 +52,7 @@ const commits: Commit[] = [
     refs: ["HEAD -> main"],
     when: "Jan 2026 – now",
     company: "SAP Labs US",
+    logo: "sap",
     role: "Software Developer, AI",
     place: "Palo Alto, CA",
     diff: [
@@ -64,6 +66,7 @@ const commits: Commit[] = [
     hash: "7be21d0",
     when: "Mar 2025 – Jan 2026",
     company: "MiHIN",
+    logo: "mihin",
     role: "Software Engineer",
     place: "Binghamton, NY",
     diff: [
@@ -76,6 +79,7 @@ const commits: Commit[] = [
     hash: "3c90a4f",
     when: "Aug 2024 – Mar 2025",
     company: "Binghamton Tech Collective",
+    logo: "binghamton",
     role: "Software Engineer",
     place: "Binghamton, NY",
     diff: ["Shop Bing student marketplace: 100+ users in two weeks, 200+ listings", "Cut fake sign-ups 95% with .edu verification"],
@@ -189,12 +193,16 @@ export default function About() {
           <h2 className="font-serif text-[26px] font-light text-muted">education</h2>
           <ul className="grid gap-5">
             <li className="grid grid-cols-[minmax(0,1fr)_auto] gap-x-4">
-              <span className="text-[16px] font-semibold text-ink-2">Binghamton University, SUNY</span>
+              <span className="flex items-center gap-2 text-[16px] font-semibold text-ink-2">
+                <OrgLogo org="binghamton" size={20} /> Binghamton University, SUNY
+              </span>
               <span className="font-mono text-[12.5px] text-faint">2023 – 2025</span>
               <span className="text-[15px] text-muted">Master of Science, Computer Science</span>
             </li>
             <li className="grid grid-cols-[minmax(0,1fr)_auto] gap-x-4">
-              <span className="text-[16px] font-semibold text-ink-2">MIT ADT University, Pune</span>
+              <span className="flex items-center gap-2 text-[16px] font-semibold text-ink-2">
+                <OrgLogo org="mit-adt" size={20} /> MIT ADT University, Pune
+              </span>
               <span className="font-mono text-[12.5px] text-faint">2019 – 2023</span>
               <span className="text-[15px] text-muted">B.Tech, Computer Science</span>
             </li>
