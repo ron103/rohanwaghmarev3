@@ -17,6 +17,7 @@ npm run build
 | `src/components/` | `top-bar`, `say-hi`, `mobile-dock`, `footer` (node graph + copy email), `cursor` (streaming cursor label), `magnetic`, `profile-card` (photo + Golden Gate), `page` (route wrapper, section label, placeholder) |
 | `src/lib/site.ts` | Links, nav, email, and the Pacific-time status lines |
 | `src/content/work.ts` | Case studies: copy, stats, pipeline diagrams, traces and code notes |
+| `src/content/projects.ts`, `notes.ts`, `resume.ts` | Projects (with terminal demos), notes (drafts), and the resume |
 | `docs/` | Design reference, direction board and interaction plan |
 
 ## Conventions
@@ -34,5 +35,5 @@ npm run build
 1. Home: streaming tagline, badge pile, trace waterfall, rolling numbers (done)
 2. About: story wrapped around the portrait, git-log timeline, physics tool shelf, Ask Rohan (done)
 3. Work: pipeline diagram, before/after slider, trace replay (done)
-4. Projects, Notes, Resume, 404
+4. Projects, Notes, Resume, 404 (done)
 5. Presence, ⌘K palette, real RAG, sound

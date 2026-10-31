@@ -103,6 +103,11 @@ h3 {
   outline-offset: 2px;
 }
 
+/* Inputs that show focus with their own caret (terminal prompt). */
+.term-input:focus-visible {
+  outline: none;
+}
+
 /* Paper grain: fixed SVG noise over the whole page, multiplied onto white. */
 .paper-grain {
   position: fixed;
@@ -313,6 +318,16 @@ h3 {
     0 2px 6px rgb(0 0 0 / 0.2);
 }
 
+/* Progress ring on the active project */
+@keyframes ring-fill {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
 /* Streaming text */
 @keyframes token-in {
   from {
@@ -354,6 +369,28 @@ h3 {
     opacity: 0;
     filter: blur(3px);
     transform: translateY(10px);
+  }
+}
+
+/* Printing (Save as PDF on /resume): only the sheet, no chrome or grain. */
+@media print {
+  @page {
+    size: letter;
+    margin: 0.5in;
+  }
+  body * {
+    visibility: hidden;
+  }
+  .print-area,
+  .print-area * {
+    visibility: visible;
+  }
+  .print-area {
+    position: absolute;
+    inset: 0 0 auto;
+  }
+  .paper-grain {
+    display: none;
   }
 }
 

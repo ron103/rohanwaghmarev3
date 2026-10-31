@@ -6,6 +6,7 @@ import { BadgePile } from "@/components/home/badge-pile";
 import { WorkCard } from "@/components/home/work-card";
 import { QuoteCard, type Quote } from "@/components/home/quote-card";
 import { TilePop } from "@/components/tile-pop";
+import { projects } from "@/content/projects";
 
 const meta = [
   { label: "Currently", value: "Software Developer, AI @SAP Labs" },
@@ -13,16 +14,11 @@ const meta = [
   { label: "Studied", value: "MS CS, Binghamton University" },
 ];
 
-const projects = [
-  { title: "Agentic Tool Orchestrator", line: "An agent router across 191 tools in 7 services." },
-  { title: "TB detection", line: "92% on TBX11K with ResNet-50. Published at IEEE." },
-  { title: "Polymarket bot", line: "A trading agent for prediction markets." },
-];
-
-// Placeholder pull quotes until the notes are written.
-const notes: { meta: string; quotes: Quote[] }[] = [
+// Pull quotes from the notes (drafts).
+const notes: { meta: string; href: string; quotes: Quote[] }[] = [
   {
     meta: "Distillation · draft",
+    href: "/notes/gold-labels",
     quotes: [
       [{ text: "The teacher model was confidently wrong." }, { text: "4,000 human labels fixed it.", mark: true }],
       [{ text: "Distillation copies the teacher's mistakes" }, { text: "with perfect confidence.", mark: true }],
@@ -30,6 +26,7 @@ const notes: { meta: string; quotes: Quote[] }[] = [
   },
   {
     meta: "Retrieval · draft",
+    href: "/notes/embed-less",
     quotes: [
       [{ text: "Concatenating fields into one vector" }, { text: "poisons the embedding.", mark: true }],
       [{ text: "Recall went from 61% to 88%" }, { text: "by embedding less, not more.", mark: true }],
@@ -37,6 +34,7 @@ const notes: { meta: string; quotes: Quote[] }[] = [
   },
   {
     meta: "Agents in prod · draft",
+    href: "/notes/agents-in-prod",
     quotes: [
       [{ text: "Every agent write" }, { text: "needs a human's name on it.", mark: true }],
       [{ text: "An agent you can't audit" }, { text: "is a demo, not a product.", mark: true }],
@@ -81,8 +79,8 @@ export default function Home() {
         <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
           {projects.map((p) => (
             <Link
-              key={p.title}
-              href="/projects"
+              key={p.slug}
+              href={`/projects#${p.slug}`}
               data-cursor="open project"
               className="grid min-w-0 grid-cols-1 rounded-[16px] bg-card p-1 transition-colors duration-200 hover:bg-card-2"
             >
@@ -91,7 +89,7 @@ export default function Home() {
               </TilePop>
               <div className="px-4 pb-4 pt-3.5">
                 <h3 className="font-serif text-[26px] font-light tracking-[-0.01em]">{p.title}</h3>
-                <p className="truncate text-[15px] text-muted">{p.line}</p>
+                <p className="truncate text-[15px] text-muted">{p.oneLiner}</p>
               </div>
             </Link>
           ))}
@@ -103,7 +101,7 @@ export default function Home() {
         <SectionLabel count={notes.length}>Notes</SectionLabel>
         <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
           {notes.map((n, i) => (
-            <QuoteCard key={n.meta} quotes={n.quotes} meta={n.meta} href="/notes" offset={i * 1400} />
+            <QuoteCard key={n.meta} quotes={n.quotes} meta={n.meta} href={n.href} offset={i * 1400} />
           ))}
         </div>
       </section>
