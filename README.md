@@ -16,6 +16,7 @@ npm run build
 | `src/app/layout.tsx` | Fonts, top bar, the white sheet that reveals the sticky night footer, mobile dock, cursor prompt, toasts, grain |
 | `src/components/` | `top-bar`, `say-hi`, `mobile-dock`, `footer` (node graph + copy email), `cursor` (streaming cursor label), `magnetic`, `profile-card` (photo + Golden Gate), `page` (route wrapper, section label, placeholder) |
 | `src/lib/site.ts` | Links, nav, email, and the Pacific-time status lines |
+| `src/content/work.ts` | Case studies: copy, stats, pipeline diagrams, traces and code notes |
 | `docs/` | Design reference, direction board and interaction plan |
 
 ## Conventions
@@ -32,6 +33,6 @@ npm run build
 0. Foundation (done)
 1. Home: streaming tagline, badge pile, trace waterfall, rolling numbers (done)
 2. About: portrait reflow, git-log timeline, physics tool shelf, Ask Rohan (done)
-3. Work: pipeline diagram, before/after slider, trace replay
+3. Work: pipeline diagram, before/after slider, trace replay (done)
 4. Projects, Notes, Resume, 404
 5. Presence, ⌘K palette, real RAG, sound

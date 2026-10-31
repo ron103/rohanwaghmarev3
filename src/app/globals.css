@@ -267,6 +267,38 @@ h3 {
   }
 }
 
+/* Range slider used as a playhead scrubber */
+.scrubber {
+  appearance: none;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--color-card-2);
+  cursor: var(--cursor-grab);
+}
+.scrubber:active {
+  cursor: var(--cursor-grabbing);
+}
+.scrubber::-webkit-slider-thumb {
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  background: #fff;
+  box-shadow:
+    0 0 0 1.5px var(--color-ink),
+    0 2px 6px rgb(0 0 0 / 0.2);
+}
+.scrubber::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border: 0;
+  border-radius: 999px;
+  background: #fff;
+  box-shadow:
+    0 0 0 1.5px var(--color-ink),
+    0 2px 6px rgb(0 0 0 / 0.2);
+}
+
 /* Streaming text */
 @keyframes token-in {
   from {

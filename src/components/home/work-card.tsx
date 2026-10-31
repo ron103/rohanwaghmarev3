@@ -135,6 +135,7 @@ export function WorkCard() {
     <Link
       ref={ref as React.RefObject<HTMLAnchorElement>}
       href="/work/sap"
+      prefetch
       data-cursor="open case study"
       onPointerEnter={(e) => {
         if (e.pointerType !== "mouse" || run === 0) return;
