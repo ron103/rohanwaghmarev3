@@ -5,13 +5,25 @@ import Link from "next/link";
 import clsx from "clsx";
 import { OrgLogo, type Org } from "../org-logo";
 
-type Item = { slug: string; company: string; role: string; logo: Org };
+type Item = { slug: string; company: string; role: string; logo?: Org };
 
 /**
  * Left index for case studies: every company, with the current one expanded
  * into its sections. The section under the middle of the screen is marked.
  */
-export function CaseNav({ items, current, sections }: { items: Item[]; current: string; sections: { id: string; label: string }[] }) {
+export function CaseNav({
+  items,
+  current,
+  sections,
+  basePath,
+  label,
+}: {
+  items: Item[];
+  current: string;
+  sections: { id: string; label: string }[];
+  basePath: string;
+  label: string;
+}) {
   const [active, setActive] = useState(sections[0]?.id);
 
   useEffect(() => {
@@ -29,20 +41,20 @@ export function CaseNav({ items, current, sections }: { items: Item[]; current: 
   }, [sections]);
 
   return (
-    <nav aria-label="Case studies" className="sticky top-[28vh] hidden self-start md:block">
+    <nav aria-label={label} className="sticky top-[28vh] hidden self-start md:block">
       <ul className="grid gap-4">
         {items.map((it) => {
           const open = it.slug === current;
           return (
             <li key={it.slug}>
               <Link
-                href={`/work/${it.slug}`}
+                href={`${basePath}/${it.slug}`}
                 prefetch
                 aria-current={open ? "page" : undefined}
                 className={clsx("grid leading-tight transition-colors", open ? "text-ink" : "text-faint hover:text-blue")}
               >
                 <span className="flex items-center gap-2 text-[15px] font-medium">
-                  <OrgLogo org={it.logo} size={16} className={open ? undefined : "opacity-60 grayscale"} />
+                  {it.logo && <OrgLogo org={it.logo} size={16} className={open ? undefined : "opacity-60 grayscale"} />}
                   {it.company}
                 </span>
                 <span className={clsx("text-[12.5px]", open ? "text-muted" : "text-faint/80")}>{it.role}</span>

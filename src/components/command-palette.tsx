@@ -134,8 +134,8 @@ export function CommandPalette() {
 
         <Command.Group heading="Projects">
           {projects.map((p) => (
-            <Row key={p.slug} icon={<Box className="size-4" />} keywords={[p.slug, ...p.stack]} onSelect={() => go(`/projects#${p.slug}`)}>
-              {p.title}
+            <Row key={p.slug} icon={<Box className="size-4" />} keywords={[p.slug, ...p.stack]} onSelect={() => go(`/projects/${p.slug}`)}>
+              {p.company}
             </Row>
           ))}
         </Command.Group>

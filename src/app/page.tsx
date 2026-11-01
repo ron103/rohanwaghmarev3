@@ -9,8 +9,8 @@ import { TilePop } from "@/components/tile-pop";
 import { projects } from "@/content/projects";
 
 const meta = [
-  { label: "Currently", value: "Software Developer, AI @SAP Labs" },
-  { label: "Previously", value: "MiHIN, Binghamton Tech Collective" },
+  { label: "Currently", value: "Software Developer @SAP Labs" },
+  { label: "Previously", value: "Michigan Health Information Network"},
   { label: "Studied", value: "MS CS, Binghamton University" },
 ];
 
@@ -80,7 +80,7 @@ export default function Home() {
           {projects.map((p) => (
             <Link
               key={p.slug}
-              href={`/projects#${p.slug}`}
+              href={`/projects/${p.slug}`}
               data-cursor="open project"
               className="grid min-w-0 grid-cols-1 rounded-[16px] bg-card p-1 transition-colors duration-200 hover:bg-card-2"
             >
@@ -88,7 +88,7 @@ export default function Home() {
                 <Placeholder label="preview video" className="size-full rounded-[12px]" />
               </TilePop>
               <div className="px-4 pb-4 pt-3.5">
-                <h3 className="font-serif text-[26px] font-light tracking-[-0.01em]">{p.title}</h3>
+                <h3 className="font-serif text-[26px] font-light tracking-[-0.01em]">{p.company}</h3>
                 <p className="truncate text-[15px] text-muted">{p.oneLiner}</p>
               </div>
             </Link>

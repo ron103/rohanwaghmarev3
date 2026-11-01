@@ -1,22 +1,23 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { ArrowUpRight } from "lucide-react";
+import Link from "next/link";
+import { ArrowRight, ArrowUpRight } from "lucide-react";
 import clsx from "clsx";
 import type { Project } from "@/content/projects";
-import { Terminal } from "./terminal";
+import { Pipeline } from "@/components/work/pipeline";
 
 const ADVANCE_MS = 14000;
 
 /**
- * List on the left, the selected project on the right with a live terminal.
- * Auto-advances until the visitor hovers, focuses, or types; the selection is
- * kept in the URL hash so /projects#tb-detection deep-links.
+ * List on the left, the selected project on the right with its interactive
+ * diagram. Auto-advances until the visitor hovers, focuses, or clicks into the
+ * panel; the selection is kept in the URL hash so /projects#clockin deep-links.
  */
 export function Showcase({ projects }: { projects: Project[] }) {
   const [i, setI] = useState(0);
   const [paused, setPaused] = useState(false);
-  const [engaged, setEngaged] = useState(false); // sticky once they type
+  const [engaged, setEngaged] = useState(false); // sticky once they click into the panel
   const [cycle, setCycle] = useState(0); // restarts the progress ring
   const p = projects[i];
 
@@ -73,7 +74,7 @@ export function Showcase({ projects }: { projects: Project[] }) {
                 className={clsx("grid w-full gap-0.5 text-left transition-colors", on ? "text-ink" : "text-faint hover:text-blue")}
               >
                 <span className="flex items-center gap-2 text-[15px] font-medium">
-                  {x.title}
+                  {x.company}
                   {on && (
                     <svg aria-hidden="true" viewBox="0 0 16 16" className="size-3.5 -rotate-90">
                       <circle cx="8" cy="8" r="6" fill="none" stroke="var(--color-line)" strokeWidth="2" />
@@ -101,16 +102,16 @@ export function Showcase({ projects }: { projects: Project[] }) {
         <li className="pt-2 font-mono text-[12px] text-faint">more coming</li>
       </ul>
 
-      <section aria-live="polite" className="grid min-w-0 content-start gap-6">
-        <Terminal project={p} onNext={() => select(i + 1)} onUserInput={() => setEngaged(true)} />
+      <section aria-live="polite" className="grid min-w-0 content-start gap-6" onPointerDown={() => setEngaged(true)}>
+        <Pipeline key={p.slug} views={p.views} />
         <div className="grid gap-5">
           <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-            <h2 className="font-serif text-[clamp(26px,3vw,34px)] font-light tracking-[-0.015em]">{p.title}</h2>
+            <h2 className="font-serif text-[clamp(26px,3vw,34px)] font-light tracking-[-0.015em]">{p.company}</h2>
             {p.status && <span className="rounded-full bg-blue-fill px-2 py-0.5 font-mono text-[11px] text-blue">{p.status}</span>}
           </div>
           <p className="max-w-[62ch] text-[16px] leading-relaxed text-muted">{p.description}</p>
           <dl className="flex flex-wrap gap-x-10 gap-y-4">
-            {p.metrics.map((m) => (
+            {p.stats.map((m) => (
               <div key={m.caption}>
                 <dd className="font-mono text-[24px] tracking-[-0.02em]">{m.value}</dd>
                 <dt className="text-[12.5px] text-muted">{m.caption}</dt>
@@ -118,6 +119,14 @@ export function Showcase({ projects }: { projects: Project[] }) {
             ))}
           </dl>
           <div className="flex flex-wrap items-center gap-2">
+            <Link
+              href={`/projects/${p.slug}`}
+              prefetch
+              data-cursor="read the case study"
+              className="group inline-flex items-center gap-1.5 rounded-full bg-blue px-3.5 py-1 text-[13px] font-medium text-white transition-[scale] active:scale-[0.97]"
+            >
+              Read the case study <ArrowRight className="size-3.5 transition-[translate] group-hover:translate-x-0.5" />
+            </Link>
             {p.stack.map((s) => (
               <span key={s} className="rounded-full bg-card px-3 py-1 font-mono text-[12px] text-ink-2">
                 {s}

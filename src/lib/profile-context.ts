@@ -35,9 +35,9 @@ export function profileContext() {
 
   lines.push("\n## Projects");
   for (const p of projects) {
-    lines.push(`### ${p.title}${p.status ? ` (${p.status})` : ""}`);
+    lines.push(`### ${p.company}${p.status ? ` (${p.status})` : ""}`);
     lines.push(p.description);
-    lines.push(`Stack: ${p.stack.join(", ")}. ${p.metrics.map((m) => `${m.value} ${m.caption}`).join("; ")}`);
+    lines.push(`Stack: ${p.stack.join(", ")}. ${p.stats.map((m) => `${m.value} ${m.caption}`).join("; ")}`);
   }
 
   lines.push("\n## Notes (essays)");

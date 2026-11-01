@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Play, RotateCcw } from "lucide-react";
 import clsx from "clsx";
-import type { PipeNode, Pipeline as PipelineData } from "@/content/work";
+import type { PipeNode, Pipeline as PipelineData, PipelineView } from "@/content/work";
 
 const W = 120; // node width
 const H = 52; // node height
@@ -72,9 +72,15 @@ const kindStyle: Record<NonNullable<PipeNode["kind"]>, string> = {
   store: "fill-[var(--color-card)] stroke-[#c4c6be]",
 };
 
-export function Pipeline({ before, after }: { before: PipelineData; after: PipelineData }) {
-  const [which, setWhich] = useState<"before" | "after">("after");
-  const data = which === "before" ? before : after;
+/**
+ * One or more views of a system (e.g. Before / After). Click a step for its
+ * details; Run sends a packet through. Timed views show a simulated clock in
+ * seconds; untimed ones (no real timings) only show progress.
+ */
+export function Pipeline({ views }: { views: PipelineView[] }) {
+  const [which, setWhich] = useState(views.length - 1); // open on the last view ("After")
+  const data: PipelineData = views[which].data;
+  const timed = data.timed !== false;
   const [selected, setSelected] = useState<string | null>(null);
   const [t, setT] = useState<number | null>(null); // real ms into the run; null = idle
   const raf = useRef(0);
@@ -100,7 +106,7 @@ export function Pipeline({ before, after }: { before: PipelineData; after: Pipel
     raf.current = requestAnimationFrame(tick);
   };
 
-  const switchTo = (w: "before" | "after") => {
+  const switchTo = (w: number) => {
     cancelAnimationFrame(raf.current);
     setT(null);
     setSelected(null);
@@ -135,25 +141,29 @@ export function Pipeline({ before, after }: { before: PipelineData; after: Pipel
   return (
     <div className="grid gap-3">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <div role="tablist" aria-label="Pipeline version" className="flex rounded-full bg-card p-1">
-          {(["before", "after"] as const).map((w) => (
-            <button
-              key={w}
-              role="tab"
-              aria-selected={which === w}
-              onClick={() => switchTo(w)}
-              className={clsx(
-                "rounded-full px-3.5 py-1.5 text-[13.5px] font-medium capitalize transition-[background-color,color] duration-200",
-                which === w ? "bg-white text-ink shadow-[0_1px_2px_rgba(0,0,0,0.08)]" : "text-muted hover:text-blue",
-              )}
-            >
-              {w}
-            </button>
-          ))}
-        </div>
+        {views.length > 1 ? (
+          <div role="tablist" aria-label="Diagram view" className="flex rounded-full bg-card p-1">
+            {views.map((v, w) => (
+              <button
+                key={v.label}
+                role="tab"
+                aria-selected={which === w}
+                onClick={() => switchTo(w)}
+                className={clsx(
+                  "rounded-full px-3.5 py-1.5 text-[13.5px] font-medium transition-[background-color,color] duration-200",
+                  which === w ? "bg-white text-ink shadow-[0_1px_2px_rgba(0,0,0,0.08)]" : "text-muted hover:text-blue",
+                )}
+              >
+                {v.label}
+              </button>
+            ))}
+          </div>
+        ) : (
+          <span className="font-mono text-[12px] text-faint">{views[0].label}</span>
+        )}
         <div className="flex items-center gap-3">
           <span className="font-mono text-[12px] tabular-nums text-muted" aria-live="polite">
-            {t === null ? "idle" : done ? `done in ${simNow.toFixed(1)}s` : `t = ${simNow.toFixed(1)}s`}
+            {t === null ? "idle" : !timed ? (done ? "done" : "running…") : done ? `done in ${simNow.toFixed(1)}s` : `t = ${simNow.toFixed(1)}s`}
           </span>
           <button
             type="button"
@@ -168,7 +178,7 @@ export function Pipeline({ before, after }: { before: PipelineData; after: Pipel
       </div>
 
       <div className="overflow-x-auto rounded-[18px] bg-white shadow-[inset_0_0_0_1px_var(--color-line)]">
-        <svg viewBox="-6 -4 772 308" className="block w-full min-w-[640px]" role="group" aria-label={`${which} pipeline`}>
+        <svg viewBox="-6 -4 772 308" className="block w-full min-w-[640px]" role="group" aria-label={`${views[which].label} diagram`}>
           <defs>
             <pattern id="hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
               <rect width="6" height="6" fill="#f6f6f3" />
@@ -247,7 +257,7 @@ export function Pipeline({ before, after }: { before: PipelineData; after: Pipel
                     {n.sub}
                   </text>
                 )}
-                {finished && n.secs ? (
+                {timed && finished && n.secs ? (
                   <text x={W - 8} y={-6} textAnchor="end" className="fill-[var(--color-blue)] font-mono text-[10px]">
                     {n.secs}s
                   </text>
@@ -263,12 +273,14 @@ export function Pipeline({ before, after }: { before: PipelineData; after: Pipel
           <p className="flex flex-wrap items-baseline gap-x-2 text-[15px] font-semibold text-ink-2">
             {sel.label}
             {sel.sub && <span className="font-mono text-[11.5px] font-normal text-muted">{sel.sub}</span>}
-            {sel.secs ? <span className="ml-auto font-mono text-[11.5px] font-normal text-faint">~{sel.secs}s</span> : null}
+            {timed && sel.secs ? <span className="ml-auto font-mono text-[11.5px] font-normal text-faint">~{sel.secs}s</span> : null}
           </p>
           <p className="text-[14.5px] leading-relaxed text-muted">{sel.detail}</p>
         </div>
       )}
-      <p className="font-mono text-[11.5px] text-faint">Click any step for details · Run plays a request at relative speed</p>
+      <p className="font-mono text-[11.5px] text-faint">
+        Click any step for details · {timed ? "Run plays a request at relative speed" : "Run walks a request through each step"}
+      </p>
     </div>
   );
 }

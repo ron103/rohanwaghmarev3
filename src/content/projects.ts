@@ -1,90 +1,678 @@
-// Projects shown on /projects. Terminal output is a scripted demo, not a live run.
+import type { CaseStudy } from "./work";
 
-export type TermLine = { text: string; tone?: "muted" | "ok" | "accent" | "warn" };
+// Projects shown on /projects and /projects/[slug]. Numbers come from the
+// repos and Rohan's write-ups; anything illustrative is labelled on the page.
 
-export type Project = {
-  slug: string;
-  title: string;
+export type Project = CaseStudy & {
   oneLiner: string;
   description: string;
   stack: string[];
-  metrics: { value: string; caption: string }[];
   links: { label: string; href: string }[];
   status?: string;
-  demo: { command: string; output: TermLine[] };
 };
 
 export const projects: Project[] = [
   {
     slug: "orchestrator",
-    title: "Agentic Tool Orchestrator",
-    oneLiner: "An agent router across 191 tools in 7 services.",
+    company: "Agentic Tool Orchestrator",
+    badge: "Agents · 2026",
+    role: "Personal project",
+    timeline: "2026",
+    place: "Palo Alto, CA",
+    scope: "Python, FastAPI, OpenAI API",
+    oneLiner: "Routing an agent across 191 tools in 7 services.",
     description:
-      "One model can't hold 191 tool schemas in context and still pick well. The orchestrator routes each request to the right service first, then exposes only that service's tools. Instruction-following went from 50% to 100% and context shrank by 40%.",
+      "One model can't hold 191 tool schemas and still pick well. A cheap router decides which services a request needs, and the agent only ever sees those tools, plus an escape hatch if the router missed one.",
     stack: ["Python", "FastAPI", "OpenAI API"],
-    metrics: [
-      { value: "50% → 100%", caption: "instruction-following" },
+    links: [{ label: "Code", href: "https://github.com/ron103/Agentic-Tool-Orchestrator" }],
+    title: ["Showing an agent ", "fewer tools", " made it better."],
+    lede: "With every tool in context, the model followed instructions half the time. Routing first and scoping the catalog took that to every time, with 40% less context per call.",
+    stats: [
+      { value: "100%", from: "50%", caption: "instruction-following" },
       { value: "−40%", caption: "context per call" },
+      { value: "191", caption: "tools across 7 services" },
       { value: "24", caption: "end-to-end tests" },
     ],
-    links: [{ label: "Code", href: "https://github.com/ron103/Agentic-Tool-Orchestrator" }],
-    demo: {
-      command: 'orchestrator run "book a flight to SFO on Friday"',
-      output: [
-        { text: "→ routing across 7 services, 191 tools", tone: "muted" },
-        { text: "  router picked: travel (0.94)", tone: "accent" },
-        { text: "  exposing 23 of 191 tools", tone: "muted" },
-        { text: "→ search_flights(to=SFO, date=2026-11-06)" },
-        { text: "  3 options found" },
-        { text: "→ hold_seat(flight=UA 1542)" },
-        { text: "  circuit breaker: travel-api healthy", tone: "muted" },
-        { text: "✓ seat held · 2 tool calls · 1.8s", tone: "ok" },
-      ],
-    },
+    views: [
+      {
+        label: "Before",
+        data: {
+          timed: false,
+          nodes: [
+            { id: "in", label: "Request", x: 70, y: 150, kind: "io", detail: "A plain-language request, like “email Sam the notes from Tuesday’s meeting”.", secs: 2 },
+            {
+              id: "llm",
+              label: "LLM",
+              sub: "all 191 schemas",
+              x: 320,
+              y: 150,
+              kind: "llm",
+              detail: "Every tool schema from all seven services sits in context on every turn. The model has to find 2 relevant tools among 191.",
+              secs: 14,
+            },
+            {
+              id: "calls",
+              label: "Tool calls",
+              sub: "often the wrong ones",
+              x: 520,
+              y: 150,
+              kind: "code",
+              detail: "With that much noise, it picked near-miss tools or ignored instructions about half the time.",
+              secs: 6,
+            },
+            { id: "out", label: "Answer", x: 690, y: 150, kind: "io", detail: "Right about 50% of the time on the instruction-following suite.", secs: 0 },
+          ],
+          edges: [
+            ["in", "llm"],
+            ["llm", "calls"],
+            ["calls", "out"],
+          ],
+        },
+      },
+      {
+        label: "After",
+        data: {
+          timed: false,
+          nodes: [
+            { id: "in", label: "Request", x: 70, y: 150, kind: "io", detail: "Same request.", secs: 2 },
+            {
+              id: "router",
+              label: "Router",
+              sub: "gpt-4.1-mini",
+              x: 220,
+              y: 150,
+              kind: "model",
+              detail:
+                "A small model returns the services this request needs, as strict JSON. It is told to favour recall over precision, and if it fails it fails open to every service.",
+              secs: 4,
+            },
+            {
+              id: "scope",
+              label: "Scoped catalog",
+              sub: "routed services only",
+              x: 380,
+              y: 150,
+              kind: "code",
+              detail: "Only the routed services' tools are loaded. GitHub is split into groups, and its core group always comes along.",
+              secs: 2,
+            },
+            {
+              id: "loop",
+              label: "Tool loop",
+              sub: "scoped tools",
+              x: 540,
+              y: 150,
+              kind: "llm",
+              detail: "The agent works with a short, relevant tool list. Mock services run sequentially so results are deterministic in tests.",
+              secs: 8,
+            },
+            { id: "out", label: "Answer", x: 690, y: 150, kind: "io", detail: "100% on the same instruction-following suite.", secs: 0 },
+            {
+              id: "hatch",
+              label: "Escape hatch",
+              sub: "request more tools",
+              x: 460,
+              y: 262,
+              kind: "code",
+              detail: "If the router missed a service, the agent calls request_additional_tools and the catalog grows mid-run instead of failing.",
+            },
+            {
+              id: "guard",
+              label: "Circuit breakers",
+              sub: "turn + call budgets",
+              x: 540,
+              y: 42,
+              kind: "code",
+              detail: "At most 10 LLM turns, 30 tool calls and about 60 seconds. Two identical failures in a row stop the run, and tool results are capped at 20k characters.",
+            },
+          ],
+          edges: [
+            ["in", "router"],
+            ["router", "scope"],
+            ["scope", "loop"],
+            ["loop", "out"],
+            ["loop", "hatch", "dashed"],
+            ["hatch", "scope", "dashed"],
+            ["guard", "loop", "dashed"],
+          ],
+          group: { label: "stage 1 · routing", ids: ["router", "scope"] },
+        },
+      },
+    ],
+    sections: [
+      {
+        id: "problem",
+        title: "191 tools, one confused model.",
+        body: [
+          "The agent could act on GitHub, Google Calendar, Linear, Gmail, Drive, Slack and Perplexity. Together that's 191 tool schemas, and GitHub alone is 86.",
+          "Putting all of them in context made every call expensive, and the model followed instructions only half the time. It wasn't short of ability. It was drowning in options.",
+        ],
+      },
+      {
+        id: "built",
+        kind: "pipeline",
+        title: "Route first, then act.",
+        body: [
+          "Stage one is a cheap router that names the services a request needs. Stage two is the tool loop, which only sees those services' tools. Press Run, or click any step.",
+        ],
+      },
+      {
+        id: "routing",
+        kind: "toolgrid",
+        title: "Try the router.",
+        body: [
+          "Pick a request and watch the catalog shrink to what it needs. Then simulate a miss: the agent asks for the missing service and carries on.",
+        ],
+      },
+      {
+        id: "guardrails",
+        kind: "list",
+        title: "Guardrails, so it fails politely.",
+        body: ["An agent loop with real side effects needs hard stops. These are the ones that earned their place."],
+        items: [
+          { title: "Budgets", text: "10 LLM turns, 30 tool calls and a 60-second soft budget per request." },
+          { title: "Repeat-failure stop", text: "Two identical failures in a row end the run instead of looping on a broken call." },
+          { title: "24-test suite", text: "End-to-end tests over the mock services, so routing changes can't quietly regress." },
+        ],
+      },
+    ],
+  },
+  {
+    slug: "layoff-tracker",
+    company: "Industry Layoff Tracker",
+    badge: "Data · 2024",
+    role: "Team project",
+    timeline: "Fall 2024",
+    place: "Binghamton, NY",
+    scope: "Python, Faktory, MongoDB, Flask",
+    oneLiner: "200k+ posts a month on how people feel about layoffs.",
+    description:
+      "Crawlers pull Reddit and 4chan posts about layoffs, workers score toxicity and sentiment, and a dashboard tracks the mood. The interesting parts were a silent outage, a schema that kept growing, and data that disagreed with us.",
+    stack: ["Python", "Faktory", "MongoDB", "Flask", "Plotly"],
+    links: [{ label: "Code", href: "https://github.com/ron103/industry-specific-layoff-tracker" }],
+    title: ["Measuring the mood of ", "layoff season", "."],
+    lede: "A crawler-and-workers pipeline over Reddit and 4chan, scoring every post for toxicity and sentiment. It ended up proving our own hypothesis wrong.",
+    stats: [
+      { value: "200k+", caption: "posts a month" },
+      { value: "2", caption: "sources, one schema" },
+      { value: "1 hr", from: "1 week", caption: "to notice an outage" },
+      { value: "Top", caption: "submission in the class" },
+    ],
+    views: [
+      {
+        label: "Before",
+        data: {
+          timed: false,
+          nodes: [
+            { id: "reddit", label: "Reddit crawler", sub: "API", x: 70, y: 90, kind: "io", detail: "Pulls posts and comments from layoff-related subreddits.", secs: 3 },
+            {
+              id: "chan",
+              label: "4chan crawler",
+              sub: "HTML",
+              x: 70,
+              y: 210,
+              kind: "io",
+              detail: "Scrapes threads from the relevant boards. During the election traffic surge this one failed without a sound.",
+              secs: 3,
+            },
+            { id: "q", label: "Faktory queue", x: 250, y: 150, kind: "code", detail: "Jobs fan out to workers running in Docker.", secs: 2 },
+            {
+              id: "work",
+              label: "Workers",
+              sub: "toxicity · VADER",
+              x: 420,
+              y: 150,
+              kind: "model",
+              detail: "ModerateHateSpeech scores toxicity. VADER scores sentiment, weighted by engagement.",
+              secs: 5,
+            },
+            { id: "db", label: "MongoDB", sub: "posts", x: 580, y: 150, kind: "store", detail: "reddit_posts and chan_posts collections.", secs: 1 },
+            { id: "dash", label: "Dashboard", sub: "Flask · Plotly", x: 700, y: 150, kind: "io", detail: "Nobody noticed the gap until a week of data was missing.", secs: 0 },
+          ],
+          edges: [
+            ["reddit", "q"],
+            ["chan", "q"],
+            ["q", "work"],
+            ["work", "db"],
+            ["db", "dash"],
+          ],
+        },
+      },
+      {
+        label: "After",
+        data: {
+          timed: false,
+          nodes: [
+            { id: "reddit", label: "Reddit crawler", sub: "API", x: 70, y: 90, kind: "io", detail: "Same crawler, now with API keys rotated across the team to stay under rate limits.", secs: 3 },
+            { id: "chan", label: "4chan crawler", sub: "HTML", x: 70, y: 210, kind: "io", detail: "Same crawler, now watched.", secs: 3 },
+            { id: "q", label: "Faktory queue", x: 250, y: 150, kind: "code", detail: "Takes backfill jobs exactly like live ones, so no special path for recovery.", secs: 2 },
+            { id: "work", label: "Workers", sub: "toxicity · VADER", x: 420, y: 150, kind: "model", detail: "Same scoring as before. Backfilled posts get scored like any other.", secs: 5 },
+            { id: "db", label: "MongoDB", sub: "posts", x: 580, y: 150, kind: "store", detail: "The monitor reads from here: no new posts from a source in an hour means something broke.", secs: 1 },
+            { id: "dash", label: "Dashboard", sub: "Flask · Plotly", x: 700, y: 150, kind: "io", detail: "Gaps are filled before anyone sees them.", secs: 0 },
+            {
+              id: "mon",
+              label: "Hourly monitor",
+              sub: "email + incident log",
+              x: 420,
+              y: 250,
+              kind: "code",
+              detail: "Every hour, checks that each source wrote new posts. If not, it emails the team and logs an incident.",
+            },
+            {
+              id: "fill",
+              label: "Backfill",
+              sub: "day by day",
+              x: 250,
+              y: 250,
+              kind: "code",
+              detail: "Re-crawls the missing window one day at a time, so a long outage doesn't blow the rate limit in one go.",
+            },
+          ],
+          edges: [
+            ["reddit", "q"],
+            ["chan", "q"],
+            ["q", "work"],
+            ["work", "db"],
+            ["db", "dash"],
+            ["db", "mon", "dashed"],
+            ["mon", "fill", "dashed"],
+            ["fill", "q", "dashed"],
+          ],
+          group: { label: "self-healing", ids: ["mon", "fill"] },
+        },
+      },
+    ],
+    sections: [
+      {
+        id: "problem",
+        title: "A week of data, gone quietly.",
+        body: [
+          "During the US election traffic surge, the 4chan crawler started failing silently. Nothing crashed and nothing alerted. We found out a week later, when the charts had a hole in them.",
+        ],
+      },
+      {
+        id: "built",
+        kind: "pipeline",
+        title: "Making it heal itself.",
+        body: [
+          "The fix wasn't a better crawler. It was noticing. An hourly monitor checks every source, emails us and logs an incident, and a backfill job re-crawls the gap one day at a time with rotated keys.",
+        ],
+      },
+      {
+        id: "data",
+        kind: "schema",
+        title: "Why Mongo, not SQL.",
+        body: [
+          "We kept discovering new things to measure. With a document store each new signal was a field, not a migration. We agreed to revisit SQL if the schema held still for three weeks. It never did.",
+        ],
+      },
+      {
+        id: "finding",
+        kind: "sentiment",
+        title: "The data disagreed with us.",
+        body: [
+          "We assumed the market was collapsing and fear would only rise. The data said otherwise: fear spiked just before real layoff news, then faded, and mentions of being unemployed drifted down.",
+          "We changed the story to match the data. That pivot is what the project was graded on.",
+        ],
+      },
+    ],
+  },
+  {
+    slug: "kalshi-agent",
+    company: "Kalshi paper-trading agent",
+    badge: "Agents · 2026",
+    role: "Personal project",
+    timeline: "Spring 2026",
+    place: "Palo Alto, CA",
+    scope: "Python, Claude API, SQLite",
+    status: "Paper trading",
+    oneLiner: "An hourly agent that researches prediction markets and paper-bets.",
+    description:
+      "Every hour it settles old bets, picks the busiest Kalshi markets, has Claude research each one with web search, and paper-bets only when it's confident. No real money moves.",
+    stack: ["Python", "Claude API", "Kalshi API", "SQLite"],
+    links: [{ label: "Code", href: "https://github.com/ron103/claude-polymarket-bot" }],
+    title: ["An agent that only bets when it's ", "sure enough", "."],
+    lede: "A loop that narrows hundreds of open markets to a handful of researched, confident calls, and keeps score in a paper portfolio.",
+    stats: [
+      { value: "600", caption: "markets scanned an hour" },
+      { value: "10", caption: "researched by Claude" },
+      { value: "≥65%", caption: "confidence to bet" },
+      { value: "$1,000", caption: "paper bankroll" },
+    ],
+    views: [
+      {
+        label: "Hourly loop",
+        data: {
+          timed: false,
+          nodes: [
+            { id: "cron", label: "Every hour", x: 70, y: 90, kind: "io", detail: "A scheduler starts one run an hour.", secs: 1 },
+            { id: "resolve", label: "Resolve bets", sub: "settle positions", x: 230, y: 90, kind: "code", detail: "Checks every open paper bet against Kalshi and settles the ones that closed.", secs: 2 },
+            {
+              id: "discover",
+              label: "Discover",
+              sub: "6 series → top 30",
+              x: 390,
+              y: 90,
+              kind: "code",
+              detail: "Pulls up to 100 open markets from each of six series (NBA, MLB, Fed, BTC, ETH, S&P) and keeps the 30 busiest by volume.",
+              secs: 3,
+            },
+            {
+              id: "filter",
+              label: "Filter",
+              sub: "≤10 markets",
+              x: 550,
+              y: 90,
+              kind: "code",
+              detail: "Drops markets priced at the extremes, closing within two hours, or already bet on. Up to 10 survive.",
+              secs: 1,
+            },
+            {
+              id: "research",
+              label: "Claude research",
+              sub: "web search",
+              x: 550,
+              y: 225,
+              kind: "llm",
+              detail: "Claude researches each market with web search, up to 10 tool turns, and returns YES, NO or SKIP with a confidence and its reasoning.",
+              secs: 9,
+            },
+            {
+              id: "bet",
+              label: "Paper bet",
+              sub: "conf ≥ 65 · ≤5/run",
+              x: 390,
+              y: 225,
+              kind: "code",
+              detail: "Bets $50 on calls at 65% confidence or more, at most five per run.",
+              secs: 2,
+            },
+            {
+              id: "book",
+              label: "Portfolio",
+              sub: "SQLite · logs",
+              x: 230,
+              y: 225,
+              kind: "store",
+              detail: "Bets go to a SQLite portfolio that started at $1,000, plus a JSONL log of every decision and a CSV summary.",
+              secs: 1,
+            },
+          ],
+          edges: [
+            ["cron", "resolve"],
+            ["resolve", "discover"],
+            ["discover", "filter"],
+            ["filter", "research"],
+            ["research", "bet"],
+            ["bet", "book"],
+            ["book", "cron", "dashed"],
+          ],
+        },
+      },
+    ],
+    sections: [
+      {
+        id: "built",
+        kind: "pipeline",
+        title: "One run, start to finish.",
+        body: ["Each hour is the same seven steps. The expensive one, research, only ever sees ten markets. Press Run to follow a run through."],
+      },
+      {
+        id: "funnel",
+        kind: "funnel",
+        title: "Hundreds of markets, a few bets.",
+        body: [
+          "Most of the work is saying no. Drag the confidence gate and see how many calls make it, and when the per-run cap starts to bite.",
+        ],
+      },
+      {
+        id: "why",
+        kind: "list",
+        title: "Choices that kept it honest.",
+        body: ["A betting agent is easy to fool yourself with. These kept the scorekeeping straight."],
+        items: [
+          { title: "Paper only", text: "A local portfolio and a full decision log, so every call can be checked later." },
+          { title: "SKIP is allowed", text: "The model can decline. Most runs, most markets get skipped." },
+          { title: "Volume first", text: "Busy markets have better prices and more news to research." },
+        ],
+      },
+    ],
+  },
+  {
+    slug: "clockin",
+    company: "Clockin",
+    badge: "iOS · 2025",
+    role: "Solo project",
+    timeline: "Early 2025",
+    place: "Binghamton, NY",
+    scope: "Swift, SwiftUI, WatchKit",
+    oneLiner: "Shift tracking on iPhone and Apple Watch. Learned Swift for it.",
+    description:
+      "Clock in from your wrist, take breaks, and watch earnings tick up against net work time. I learned Swift in three weeks to build it, then open-sourced it.",
+    stack: ["Swift", "SwiftUI", "WatchKit"],
+    links: [{ label: "Code", href: "https://github.com/ron103/clockin" }],
+    title: ["Learning Swift by building ", "a watch app", "."],
+    lede: "A shift tracker for iPhone and Apple Watch with one shared model layer. Three weeks from first line of Swift to a working app.",
+    stats: [
+      { value: "3 wks", caption: "from zero Swift" },
+      { value: "2", caption: "platforms, one codebase" },
+      { value: "3", caption: "watch pages" },
+      { value: "$15", caption: "an hour, ticking live" },
+    ],
+    views: [
+      {
+        label: "Architecture",
+        data: {
+          timed: false,
+          nodes: [
+            { id: "watch", label: "Watch app", sub: "WatchKit · 3 pages", x: 70, y: 90, kind: "io", detail: "Clock in and out, breaks, totals and an earnings ring.", secs: 2 },
+            { id: "phone", label: "iPhone app", sub: "SwiftUI", x: 70, y: 210, kind: "io", detail: "Sign-in, devices and work history.", secs: 2 },
+            {
+              id: "vm",
+              label: "ViewModels",
+              sub: "Auth · Devices",
+              x: 270,
+              y: 150,
+              kind: "code",
+              detail: "Both apps bind to the same view models, so a feature is written once.",
+              secs: 3,
+            },
+            {
+              id: "models",
+              label: "Models",
+              sub: "User · WorkDay",
+              x: 440,
+              y: 150,
+              kind: "code",
+              detail: "UserRecord, WorkDayRecord and DeviceModel. Plain Swift structs shared by both targets.",
+              secs: 2,
+            },
+            { id: "store", label: "Store", sub: "in-memory · seed", x: 640, y: 150, kind: "store", detail: "An in-memory store with seed data, easy to swap for persistence later.", secs: 0 },
+            {
+              id: "earn",
+              label: "Earnings",
+              sub: "sessionWorkTime",
+              x: 440,
+              y: 265,
+              kind: "code",
+              detail: "Earnings follow a separate work-time counter that pauses during breaks. $15/hr and a 6-hour goal by default.",
+            },
+          ],
+          edges: [
+            ["watch", "vm"],
+            ["phone", "vm"],
+            ["vm", "models"],
+            ["models", "store"],
+            ["models", "earn", "dashed"],
+          ],
+          group: { label: "shared MVVM", ids: ["vm", "models"] },
+        },
+      },
+    ],
+    sections: [
+      {
+        id: "problem",
+        title: "Three weeks, zero Swift.",
+        body: [
+          "I wanted a shift tracker I could use from my wrist, and I didn't know Swift. Week one was syntax through tiny programs, week two was SwiftUI layouts, week three was state and persistence.",
+        ],
+      },
+      {
+        id: "watch",
+        kind: "watch",
+        title: "Try the watch.",
+        body: ["A working replica of the three watch pages, sped up 120×. Clock in, take a break, and watch the earnings stop."],
+      },
+      {
+        id: "built",
+        kind: "pipeline",
+        title: "One model layer, two apps.",
+        body: ["MVVM kept the watch and phone apps thin. Both share the same view models and records, so each feature was written once."],
+      },
+    ],
   },
   {
     slug: "tb-detection",
-    title: "TB detection",
-    oneLiner: "92% on TBX11K with ResNet-50. Published at IEEE.",
+    company: "TB detection research",
+    badge: "IEEE · 2023",
+    role: "Co-author",
+    status: "Published",
+    timeline: "2022 – 2023",
+    place: "Pune, India",
+    scope: "TensorFlow, ResNet-50",
+    oneLiner: "92% on TBX11K with ResNet-50, published at IEEE.",
     description:
-      "Transfer learning on chest X-rays to flag tuberculosis. CLAHE preprocessing and augmentation got ResNet-50 to 92% accuracy on TBX11K, checked with Grad-CAM so the model was looking at lungs, not labels. Co-authored an IEEE paper reviewing 60+ studies.",
-    stack: ["TensorFlow", "ResNet-50", "Python"],
-    metrics: [
+      "A review of 60+ studies on detecting tuberculosis from chest X-rays, narrowed to 15 we could reproduce, then a ResNet-50 that reached 92% on TBX11K, checked with Grad-CAM.",
+    stack: ["Python", "TensorFlow", "ResNet-50"],
+    links: [{ label: "Paper", href: "https://ieeexplore.ieee.org/document/10112352" }],
+    title: ["Reading 60 papers to ", "trust one model", "."],
+    lede: "A literature review run like a filter, then a transfer-learning model that reached 92% accuracy on TBX11K and was checked to be looking at the lungs.",
+    stats: [
       { value: "92%", caption: "accuracy on TBX11K" },
-      { value: "60+", caption: "studies reviewed" },
+      { value: "15", from: "60+", caption: "papers worth reproducing" },
+      { value: "4", caption: "scoring dimensions" },
       { value: "IEEE", caption: "published" },
     ],
-    links: [{ label: "Paper", href: "https://ieeexplore.ieee.org/document/10112352" }],
-    demo: {
-      command: "tb-detect predict chest_xray_0412.png --gradcam",
-      output: [
-        { text: "→ preprocessing: CLAHE, resize 224×224", tone: "muted" },
-        { text: "→ resnet50 (imagenet → tbx11k fine-tuned)", tone: "muted" },
-        { text: "  P(tuberculosis) = 0.91", tone: "accent" },
-        { text: "  grad-cam focus: upper right lobe" },
-        { text: "✓ flagged for radiologist review", tone: "ok" },
-      ],
-    },
-  },
-  {
-    slug: "polymarket-bot",
-    title: "Polymarket bot",
-    oneLiner: "A trading agent for prediction markets.",
-    description:
-      "A side project that watches prediction markets, estimates fair odds, and places small bets when the gap is big enough. Mostly an excuse to learn about market microstructure and to see how wrong my priors are.",
-    stack: ["Python", "LLM agents"],
-    metrics: [{ value: "WIP", caption: "learning in public" }],
-    links: [],
-    status: "In progress",
-    demo: {
-      command: "polybot scan --min-edge 0.05",
-      output: [
-        { text: "→ scanning 412 open markets", tone: "muted" },
-        { text: "  fair-odds model: news + base rates", tone: "muted" },
-        { text: "  2 markets with edge ≥ 5%", tone: "accent" },
-        { text: "! paper-trading mode, no real orders", tone: "warn" },
-        { text: "✓ logged 2 hypothetical positions", tone: "ok" },
-      ],
-    },
+    views: [
+      {
+        label: "Literature review",
+        data: {
+          timed: false,
+          nodes: [
+            { id: "in", label: "60+ papers", x: 70, y: 150, kind: "io", detail: "Every TB-detection paper we could find, tracked in a shared sheet.", secs: 2 },
+            {
+              id: "rubric",
+              label: "4-axis rubric",
+              sub: "method · data · limits",
+              x: 230,
+              y: 150,
+              kind: "code",
+              detail: "Each paper scored on methodology, accuracy, limitations and dataset quality.",
+              secs: 4,
+            },
+            {
+              id: "score",
+              label: "Worthiness",
+              sub: "accuracy × data size",
+              x: 390,
+              y: 150,
+              kind: "code",
+              detail: "Relative accuracy times dataset size. Above 80 earned a deep dive.",
+              secs: 2,
+            },
+            {
+              id: "con",
+              label: "Constraints",
+              sub: "open · public · our GPUs",
+              x: 550,
+              y: 150,
+              kind: "code",
+              detail: "Open-source code, public data, and small enough to train on the university's GPUs.",
+              secs: 2,
+            },
+            { id: "out", label: "15 papers", x: 700, y: 150, kind: "io", detail: "The shortlist we reproduced and built on.", secs: 0 },
+          ],
+          edges: [
+            ["in", "rubric"],
+            ["rubric", "score"],
+            ["score", "con"],
+            ["con", "out"],
+          ],
+        },
+      },
+      {
+        label: "Model pipeline",
+        data: {
+          timed: false,
+          nodes: [
+            { id: "x", label: "Chest X-ray", x: 70, y: 150, kind: "io", detail: "TBX11K images.", secs: 1 },
+            { id: "clahe", label: "CLAHE", sub: "local contrast", x: 220, y: 150, kind: "code", detail: "Contrast-limited histogram equalization brings out faint lesions.", secs: 2 },
+            { id: "aug", label: "Augment", sub: "flip · rotate · zoom", x: 370, y: 150, kind: "code", detail: "Aggressive augmentation so the model can't memorize a small dataset.", secs: 2 },
+            {
+              id: "net",
+              label: "ResNet-50",
+              sub: "ImageNet → TBX11K",
+              x: 530,
+              y: 150,
+              kind: "model",
+              detail: "Transfer learning from ImageNet weights, fine-tuned on TBX11K.",
+              secs: 6,
+            },
+            { id: "out", label: "TB / healthy", x: 690, y: 150, kind: "io", detail: "92% accuracy, reported with precision, recall, F1 and AUC-ROC.", secs: 0 },
+            {
+              id: "cam",
+              label: "Grad-CAM",
+              sub: "where it looks",
+              x: 530,
+              y: 265,
+              kind: "code",
+              detail: "Heatmaps confirmed the model attends to the lungs, not to scanner marks or labels.",
+            },
+          ],
+          edges: [
+            ["x", "clahe"],
+            ["clahe", "aug"],
+            ["aug", "net"],
+            ["net", "out"],
+            ["net", "cam", "dashed"],
+          ],
+        },
+      },
+    ],
+    sections: [
+      {
+        id: "problem",
+        kind: "papers",
+        title: "60 papers is too many to trust.",
+        body: [
+          "Every paper claimed high accuracy, on different data, with different code, or none. We scored all of them on four dimensions and combined accuracy and dataset size into one worthiness score.",
+          "Then we cut anything we couldn't reproduce: closed code, private data, or models too big for the university's GPUs. Drag the cutoff to see how fast the list shrinks.",
+        ],
+      },
+      {
+        id: "built",
+        kind: "pipeline",
+        title: "From review to model.",
+        body: ["Switch between the two halves of the project: the review as a filter, and the model it led to."],
+      },
+      {
+        id: "data",
+        kind: "placeholder",
+        label: "charts from the paper · coming soon",
+        title: "What the data looked like.",
+        body: ["Exploratory charts from the paper go here."],
+      },
+      {
+        id: "clahe",
+        kind: "placeholder",
+        label: "CLAHE before / after slider · coming soon",
+        title: "What CLAHE changes.",
+        body: ["A before-and-after of the same X-ray, so you can see why contrast mattered."],
+      },
+    ],
   },
 ];
+
+export function getProject(slug: string) {
+  return projects.find((p) => p.slug === slug);
+}

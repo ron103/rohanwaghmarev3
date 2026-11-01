@@ -17,7 +17,9 @@ npm run build
 | `src/components/` | `top-bar`, `say-hi`, `mobile-dock`, `footer` (node graph + copy email), `cursor` (streaming cursor label), `magnetic`, `profile-card` (photo + Golden Gate), `page` (route wrapper, section label, placeholder) |
 | `src/lib/site.ts` | Links, nav, email, and the Pacific-time status lines |
 | `src/content/work.ts` | Case studies: copy, stats, pipeline diagrams, traces and code notes |
-| `src/content/projects.ts`, `notes.ts`, `resume.ts` | Projects (with terminal demos), notes (drafts), and the resume |
+| `src/content/projects.ts`, `notes.ts`, `resume.ts` | Projects (same case-study shape as Work), notes (drafts), and the resume |
+| `src/components/case-study.tsx` | The long-form template shared by `/work/[slug]` and `/projects/[slug]` |
+| `src/components/projects/visuals/` | Per-project interactive pieces: tool router, schema growth, sentiment chart, watch replica, market funnel, paper filter |
 | `docs/` | Design reference, direction board and interaction plan |
 
 ## Conventions

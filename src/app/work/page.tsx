@@ -30,7 +30,7 @@ export default function Work() {
             >
               <div className="grid gap-2">
                 <p className="flex flex-wrap items-center gap-x-2 text-[15px] font-semibold text-ink-2">
-                  <OrgLogo org={c.logo} size={20} />
+                  {c.logo && <OrgLogo org={c.logo} size={20} />}
                   {c.company}
                   <span className="font-normal text-muted">· {c.role}</span>
                   <span className="font-mono text-[12px] font-normal text-faint">{c.timeline}</span>

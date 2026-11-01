@@ -15,7 +15,7 @@ export default function Projects() {
             Things I build to <span className="mark">think</span>.
           </>
         }
-        lede="Each one has a terminal. It plays a demo first, then it's yours: try help, run, or next."
+        lede="Each one comes with the diagram of how it works. Press Run, click a step, or read the whole story."
       />
       <Showcase projects={projects} />
     </Page>
