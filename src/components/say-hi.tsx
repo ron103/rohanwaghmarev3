@@ -8,12 +8,10 @@ import clsx from "clsx";
 import { GitHubIcon, LinkedInIcon } from "./icons";
 import { site } from "@/lib/site";
 import { openPalette } from "./command-palette";
-import { play } from "@/lib/sound";
 
 export async function copyEmail() {
   try {
     await navigator.clipboard.writeText(site.email);
-    play("pop");
     toast("Email copied", { description: site.email });
   } catch {
     toast("Couldn't copy", { description: site.email });

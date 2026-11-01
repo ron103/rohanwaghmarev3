@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import clsx from "clsx";
 import { nav } from "@/lib/site";
-import { DoodleLogo } from "./icons";
+import { Doodle } from "./doodle";
 import { SayHi } from "./say-hi";
 import { StatusPill } from "./status";
 import { PaletteButton } from "./palette-button";
@@ -57,7 +57,7 @@ export function TopBar() {
           data-cursor="home"
           className="group w-fit rounded-full"
         >
-          <DoodleLogo className="avatar-bloom size-11 transition-transform duration-300 ease-[var(--ease-pop)] group-hover:-rotate-6 group-active:scale-95" />
+          <Doodle className="avatar-bloom size-11 transition-transform duration-300 ease-[var(--ease-pop)] group-hover:-rotate-6 group-active:scale-95" />
         </Link>
 
         <div className="flex justify-center">

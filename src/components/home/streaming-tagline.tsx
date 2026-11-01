@@ -2,7 +2,6 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { RotateCw } from "lucide-react";
-import { play } from "@/lib/sound";
 
 const lines = [
   "I turn 90-second pipelines into 11-second ones.",
@@ -108,7 +107,6 @@ export function StreamingTagline() {
         type="button"
         onClick={() => {
           setSpin((s) => s + 1);
-          play("tick");
           next(true);
         }}
         disabled={streaming}

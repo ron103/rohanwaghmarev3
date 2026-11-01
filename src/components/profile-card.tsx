@@ -43,7 +43,6 @@ function BridgeButton() {
         type="button"
         aria-expanded={open}
         aria-label={site.location}
-        data-cursor="what's rohan up to?"
         onClick={() => setOpen((o) => !o)}
         className="group/tip relative grid h-8 w-10 place-items-center rounded-[8px] transition-[background-color,scale] duration-150 hover:bg-[#fbeae4] active:scale-95"
       >
@@ -67,7 +66,7 @@ function BridgeButton() {
 
 export function ProfileCard() {
   return (
-    <aside className="grid content-center gap-3 border-t border-line pt-8 md:border-l md:border-t-0 md:pl-10 md:pt-0">
+    <aside className="grid content-start gap-3 self-start border-t border-line pt-8 md:border-l md:border-t-0 md:pl-10 md:pt-0">
       <Link
         href="/about"
         data-cursor="hi, that's me"

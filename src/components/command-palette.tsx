@@ -3,10 +3,9 @@
 import { useEffect, useState, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import { Command } from "cmdk";
-import { ArrowUpRight, Box, Briefcase, FileText, House, Info, Mail, NotebookPen, User, Volume2, VolumeX } from "lucide-react";
+import { ArrowUpRight, Box, Briefcase, FileText, House, Info, Mail, NotebookPen, User } from "lucide-react";
 import { toast } from "sonner";
 import { site } from "@/lib/site";
-import { play, setSound, useSoundOn } from "@/lib/sound";
 import { caseStudies } from "@/content/work";
 import { projects } from "@/content/projects";
 import { notes } from "@/content/notes";
@@ -38,7 +37,6 @@ export function CommandPalette() {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
   const router = useRouter();
-  const soundOn = useSoundOn();
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -56,14 +54,9 @@ export function CommandPalette() {
     };
   }, []);
 
-  useEffect(() => {
-    if (open) play("open");
-  }, [open]);
-
   const run = (fn: () => void) => {
     setOpen(false);
     setQuery("");
-    play("tick");
     fn();
   };
   const go = (href: string) => run(() => router.push(href));
@@ -104,7 +97,6 @@ export function CommandPalette() {
               onSelect={() =>
                 run(() => {
                   copyEmail();
-                  play("success");
                   toast("Permission granted", { description: "Email copied. I reply to everything." });
                 })
               }
@@ -157,14 +149,6 @@ export function CommandPalette() {
           </Row>
           <Row icon={<LinkedInIcon className="size-4" />} onSelect={() => ext(site.links.linkedin)}>
             Open LinkedIn <ArrowUpRight className="inline size-3.5" />
-          </Row>
-          <Row
-            icon={soundOn ? <Volume2 className="size-4" /> : <VolumeX className="size-4" />}
-            hint={soundOn ? "on" : "off"}
-            keywords={["sound", "audio", "mute"]}
-            onSelect={() => run(() => setSound(!soundOn))}
-          >
-            {soundOn ? "Turn sound off" : "Turn sound on"}
           </Row>
         </Command.Group>
       </Command.List>

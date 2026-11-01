@@ -1,13 +1,11 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { FileText } from "lucide-react";
 import { site } from "@/lib/site";
-import { copyEmail } from "./say-hi";
 import { GitHubIcon, LinkedInIcon } from "./icons";
 import { StatusLine } from "./status";
-import { SoundToggle } from "./sound-toggle";
 
 type Node = { x: number; y: number; glow: number };
 
@@ -174,6 +172,17 @@ const social =
   "grid size-9 place-items-center rounded-[10px] text-night-ink/60 transition-colors duration-150 hover:bg-white/10 hover:text-night-blue";
 
 export function Footer() {
+  const [copied, setCopied] = useState(false);
+  const copy = async () => {
+    try {
+      await navigator.clipboard.writeText(site.email);
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 1600);
+    } catch {
+      window.location.href = `mailto:${site.email}`;
+    }
+  };
+
   const hostRef = useRef<HTMLElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   useNodeGraph(canvasRef, hostRef);
@@ -191,25 +200,31 @@ export function Footer() {
       <div className="pointer-events-none relative mx-auto flex h-full max-w-[1440px] flex-col gap-6 px-[var(--gutter)] pb-[calc(env(safe-area-inset-bottom,0px)+96px)] pt-16 md:pb-10">
         {/* Email sits centred in the open space above the bottom row. */}
         <div className="flex flex-1 flex-col items-center justify-center gap-4 text-center">
-          <p className="font-mono text-[12px] text-night-ink/50">
-            $ say-hi --to rohan
-          </p>
+          <p className="font-mono text-[12px] text-night-ink/50">say hi</p>
           <button
             type="button"
-            onClick={copyEmail}
-            data-cursor="copy email"
+            onClick={copy}
+            data-cursor={copied ? "copied" : "copy email"}
             aria-label={`Copy email ${site.email}`}
-            className="group pointer-events-auto max-w-full text-center font-serif text-[clamp(30px,6.2vw,76px)] font-medium leading-[1.02] tracking-[-0.015em] [overflow-wrap:anywhere]"
+            className="group pointer-events-auto relative max-w-full text-center font-serif text-[clamp(30px,6.2vw,76px)] font-medium leading-[1.02] tracking-[-0.015em] [overflow-wrap:anywhere]"
           >
-            {[...site.email].map((ch, i) => (
-              <span
-                key={i}
-                aria-hidden="true"
-                className="inline-block transition-[translate,color] duration-300 ease-[var(--ease-out-soft)] hover:-translate-y-2 hover:text-night-blue"
-              >
-                {ch}
+            <span className={copied ? "invisible" : undefined}>
+              {[...site.email].map((ch, i) => (
+                <span
+                  key={i}
+                  aria-hidden="true"
+                  className="inline-block transition-[translate,color] duration-300 ease-[var(--ease-out-soft)] hover:-translate-y-2 hover:text-night-blue"
+                >
+                  {ch}
+                </span>
+              ))}
+            </span>
+            {/* Shown in place of the email, the same size, so nothing shifts. */}
+            {copied && (
+              <span aria-live="polite" className="absolute inset-0 grid animate-[pop-in_.2s_var(--ease-out-soft)] place-items-center text-night-blue">
+                Copied ✓
               </span>
-            ))}
+            )}
           </button>
         </div>
         <div className="pointer-events-auto flex flex-wrap items-center justify-between gap-4">
@@ -242,7 +257,6 @@ export function Footer() {
             </Link>
           </div>
           <p className="flex flex-wrap items-center gap-x-4 gap-y-1 font-mono text-[12px] text-night-ink/55">
-            <SoundToggle />
             <StatusLine />
             <span>© 2026</span>
           </p>

@@ -48,4 +48,5 @@ The FAQ on /about reads from `src/content/qa.ts`. There is no AI API on the site
 2. About: story wrapped around the portrait, experience timeline, physics tool shelf, FAQ (done)
 3. Work: pipeline diagram, before/after slider, trace replay (done)
 4. Projects, Notes, Resume, 404 (done)
-5. ⌘K palette, sound, FAQ, presence (done)
+5. ⌘K palette, FAQ (hidden), presence (done)
+6. Doodle: thick-line emoji self-portrait with blinking eyes (done)

@@ -7,8 +7,6 @@ import { SectionNav } from "@/components/about/section-nav";
 import { Story, type Paragraph } from "@/components/about/story";
 import { Timeline, type Role } from "@/components/about/timeline";
 import { ToolShelf, type Tool } from "@/components/about/tool-shelf";
-import { Faq } from "@/components/about/faq";
-import { qas } from "@/content/qa";
 import { site } from "@/lib/site";
 import { OrgLogo } from "@/components/org-logo";
 
@@ -19,7 +17,6 @@ const sections = [
   { id: "experience", label: "Experience" },
   { id: "tools", label: "Tools" },
   { id: "education", label: "Education" },
-  { id: "faq", label: "FAQ" },
   { id: "resume", label: "Resume" },
 ];
 
@@ -182,11 +179,7 @@ export default function About() {
           </ul>
         </section>
 
-        {/* Ask */}
-        <section id="faq" className="grid scroll-mt-32 gap-6">
-          <h2 className="font-serif text-[26px] font-light text-muted">questions people ask</h2>
-          <Faq qas={qas} />
-        </section>
+        {/* FAQ: hidden for now. Restore with <Faq qas={qas} /> and the "faq" entry in `sections`. */}
 
         {/* Resume + sign-off */}
         <section id="resume" className="grid scroll-mt-32 gap-6">

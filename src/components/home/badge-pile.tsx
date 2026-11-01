@@ -7,7 +7,6 @@ import clsx from "clsx";
 import { GoldenGateIcon, NodeMark } from "../icons";
 import { Portrait } from "../portrait";
 import { OrgLogo } from "../org-logo";
-import { play } from "@/lib/sound";
 
 type Badge = {
   id: string;
@@ -38,7 +37,7 @@ const badges: Badge[] = [
         <div className="flex items-center justify-between">
           <span className="flex items-center gap-1.5 font-mono text-[9.5px] font-semibold tracking-[0.12em] text-blue">
             <OrgLogo org="sap" size={16} className="rounded-[4px]" />
-            LABS US
+            SAP
           </span>
           <span className="h-1.5 w-7 rounded-full bg-card-2" />
         </div>
@@ -46,7 +45,7 @@ const badges: Badge[] = [
           <Portrait size={36} />
           <span className="grid leading-tight">
             <b className="text-[13px] font-semibold text-ink">Rohan W.</b>
-            <span className="text-[10.5px] text-muted">AI · Palo Alto</span>
+            <span className="text-[10.5px] text-muted">Palo Alto, CA</span>
           </span>
         </div>
         <span className="font-mono text-[8.5px] tracking-[0.08em] text-faint">EMP · 2026</span>
@@ -143,7 +142,6 @@ function Sticker({ badge, bounds, z, onFront }: { badge: Badge; bounds: React.Re
     if (reduce) return router.push(badge.href);
     setPeeling(true);
     onFront();
-    play("pop");
     animate(x, x.get() + 70, { duration: 0.5, ease: [0.55, 0, 0.75, 0] });
     animate(y, y.get() - 240, { duration: 0.5, ease: [0.55, 0, 0.75, 0] });
     window.setTimeout(() => router.push(badge.href), 480);
