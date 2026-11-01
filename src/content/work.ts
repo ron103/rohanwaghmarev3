@@ -29,13 +29,13 @@ export type Trace = { unit: string; axis: number; before: Span[]; after: Span[];
 export type CodeLine = { text: string; note?: string };
 
 /** A smaller project from the same role, shown under "More" after the main story. */
-export type MoreItem = { title: string; stats: Stat[]; text: string[]; stack: string[] };
+export type MoreItem = { title: string; stats: Stat[]; text: string[]; stack: string[]; href?: string };
 
 type Base = { id: string; title: string; body: string[] };
 
 export type Section =
   | (Base & { kind?: "text" })
-  | (Base & { kind: "toolgrid" | "schema" | "sentiment" | "watch" | "funnel" | "papers" })
+  | (Base & { kind: "toolgrid" | "schema" | "sentiment" | "watch" | "funnel" | "papers" | "locks" | "kg" | "context" | "retrieval" })
   | (Base & { kind: "placeholder"; label: string })
   | { id: string; title: string; body: string[]; kind: "pipeline" }
   | { id: string; title: string; body: string[]; kind: "trace" }
@@ -48,6 +48,7 @@ export type CaseStudy = {
   company: string; // the organization, or the project name for projects
   logo?: Org;
   badge?: string;
+  storyLabel?: string; // short name in the side nav when a company has several stories
   role: string;
   timeline: string;
   place: string;
@@ -66,6 +67,7 @@ export const caseStudies: CaseStudy[] = [
     company: "SAP Labs US",
     logo: "sap",
     badge: "LLM · 2026",
+    storyLabel: "Fine-tuning",
     role: "Software Developer, AI",
     timeline: "Jan 2026 – Present",
     place: "Palo Alto, CA",
@@ -329,15 +331,20 @@ export const caseStudies: CaseStudy[] = [
               "A knowledge-graph RAG service (RDF and SPARQL) answers questions for 5,000+ developers, served over MCP with PKCE auth and OpenTelemetry tracing.",
             ],
             stack: ["FastMCP", "RDF / SPARQL", "OAuth + PKCE", "OpenTelemetry"],
+            href: "/work/sap/agents",
           },
           {
-            title: "Teaching a model when to compact its own context",
-            stats: [{ value: "12,300+", caption: "training examples" }],
-            text: [
-              "The SFT and RL data pipeline for a Qwen3 model. It joins OpenHands agent trajectories (PostgreSQL) with LLM spans (ClickHouse) into OpenAI-format examples.",
-              "Kimi 2.7 labelled the data, including when the model should run /compact on its own context. Training ran on SageMaker, with endpoints wired straight into the CLI.",
+            title: "Fitting 100K-token agent runs into a 16K window",
+            stats: [
+              { value: "279", caption: "trajectories converted" },
+              { value: "15.4K", caption: "tool calls preserved" },
             ],
-            stack: ["Qwen3", "Kimi 2.7", "SageMaker", "PostgreSQL", "ClickHouse"],
+            text: [
+              "A long-context SFT pipeline for Gemma-4-12B, built from real software-engineering agent runs that were 50K–100K+ tokens long.",
+              "Runs are cut into 16K, 32K and 64K samples without splitting a tool call from its result, with Kimi summarizing whatever no longer fits. Training ran on SageMaker, and CAP-Bench can now evaluate the hosted model.",
+            ],
+            stack: ["Gemma-4-12B", "Kimi", "SageMaker", "LiteLLM", "OpenHands"],
+            href: "/work/sap/training-data",
           },
         ],
       },
@@ -347,6 +354,7 @@ export const caseStudies: CaseStudy[] = [
     slug: "mihin",
     company: "MiHIN",
     logo: "mihin",
+    storyLabel: "Data ingestion",
     role: "Software Engineer",
     timeline: "Mar 2025 – Jan 2026",
     place: "Binghamton, NY",
@@ -514,6 +522,7 @@ export const caseStudies: CaseStudy[] = [
               "Embedding only the free text and filtering on the structured fields stopped diluting the vector. A graph-driven pre-filter removed about 87% of 48K records before similarity scoring, and FHIR and SPARQL lookups resolved entities instead of guessing.",
             ],
             stack: ["Vertex AI", "FHIR", "SPARQL", "FastAPI", "React"],
+            href: "/work/mihin/clinical-rag",
           },
         ],
       },

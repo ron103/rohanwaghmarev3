@@ -3,6 +3,7 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { Page, PageHeader } from "@/components/page";
 import { caseStudies } from "@/content/work";
+import { storiesOf } from "@/content/stories";
 import { OrgLogo } from "@/components/org-logo";
 
 export const metadata: Metadata = { title: "Work" };
@@ -21,7 +22,7 @@ export default function Work() {
       />
       <ul className="grid gap-4">
         {caseStudies.map((c) => (
-          <li key={c.slug}>
+          <li key={c.slug} className="grid gap-2">
             <Link
               href={`/work/${c.slug}`}
               prefetch
@@ -56,6 +57,22 @@ export default function Work() {
                 <ArrowRight className="mb-1 size-5 shrink-0 text-muted transition-[translate,color] group-hover:translate-x-1 group-hover:text-blue" />
               </div>
             </Link>
+            {storiesOf(c.slug).length > 0 && (
+              <ul className="flex flex-wrap items-center gap-2 px-2">
+                <li className="font-mono text-[12px] text-faint">more from {c.company}:</li>
+                {storiesOf(c.slug).map((st) => (
+                  <li key={st.slug}>
+                    <Link
+                      href={`/work/${c.slug}/${st.slug}`}
+                      prefetch
+                      className="inline-flex items-center gap-1 rounded-full bg-card px-3 py-1 text-[13px] text-ink-2 transition-colors hover:bg-card-2 hover:text-blue"
+                    >
+                      {st.storyLabel} <ArrowRight className="size-3.5" />
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            )}
           </li>
         ))}
       </ul>

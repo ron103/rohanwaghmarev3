@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import { CaseNav } from "@/components/work/case-nav";
+import { CaseNav, type NavItem } from "@/components/work/case-nav";
 import { Pipeline } from "@/components/work/pipeline";
 import { TraceCompare } from "@/components/work/trace-compare";
 import { AnnotatedCode } from "@/components/work/annotated-code";
@@ -12,6 +12,10 @@ import { SentimentChart } from "@/components/projects/visuals/sentiment-chart";
 import { WatchDemo } from "@/components/projects/visuals/watch-demo";
 import { MarketFunnel } from "@/components/projects/visuals/market-funnel";
 import { PaperScatter } from "@/components/projects/visuals/paper-scatter";
+import { LockRace } from "@/components/work/visuals/lock-race";
+import { KgQuery } from "@/components/work/visuals/kg-query";
+import { ContextMeter } from "@/components/work/visuals/context-meter";
+import { RetrievalCompare } from "@/components/work/visuals/retrieval-compare";
 import type { CaseStudy, MoreItem, Section } from "@/content/work";
 
 const NAV_LABELS: Record<string, string> = {
@@ -23,6 +27,12 @@ const NAV_LABELS: Record<string, string> = {
   shipped: "Shipping",
   retrieval: "Retrieval",
   more: "More",
+  locks: "Locking",
+  kg: "Knowledge graph",
+  trust: "Accountability",
+  context: "Compaction",
+  recompress: "Recompression",
+  fair: "Fair comparison",
 };
 
 /** Smaller projects from the same role: stats, two short paragraphs, the stack. */
@@ -62,6 +72,16 @@ function MoreCards({ items }: { items: MoreItem[] }) {
               </li>
             ))}
           </ul>
+          {it.href && (
+            <Link
+              href={it.href}
+              prefetch
+              data-cursor="read the story"
+              className="group/more inline-flex w-fit items-center gap-1.5 text-[15px] font-medium text-ink-2 transition-colors hover:text-blue"
+            >
+              Read the story <ArrowRight className="size-4 transition-[translate] group-hover/more:translate-x-0.5" />
+            </Link>
+          )}
         </li>
       ))}
     </ul>
@@ -99,6 +119,14 @@ function SectionBody({ s, c }: { s: Section; c: CaseStudy }) {
       return <MarketFunnel />;
     case "papers":
       return <PaperScatter />;
+    case "locks":
+      return <LockRace />;
+    case "kg":
+      return <KgQuery />;
+    case "context":
+      return <ContextMeter />;
+    case "retrieval":
+      return <RetrievalCompare />;
     case "more":
       return <MoreCards items={s.items} />;
     case "placeholder":
@@ -129,31 +157,25 @@ export const caseGridClass =
  */
 export function CaseStudyView({
   c,
-  all,
-  basePath,
-  navLabel,
+  nav,
   meta,
-  nextLabel,
+  next,
   links,
 }: {
   c: CaseStudy;
-  all: CaseStudy[];
-  basePath: string;
-  navLabel: string;
+  nav: { items: NavItem[]; current: string; currentHref: string; label: string };
   meta: { label: string; value: string }[];
-  nextLabel: string;
+  next: { href: string; eyebrow: string; title: string };
   links?: { label: string; href: string }[];
 }) {
-  const next = all[(all.indexOf(c) + 1) % all.length];
-
   return (
     <>
       <CaseNav
-        items={all.map(({ slug, company, role, logo }) => ({ slug, company, role, logo }))}
-        current={c.slug}
+        items={nav.items}
+        current={nav.current}
+        currentHref={nav.currentHref}
         sections={c.sections.map((s) => ({ id: s.id, label: NAV_LABELS[s.id] ?? s.title }))}
-        basePath={basePath}
-        label={navLabel}
+        label={nav.label}
       />
 
       <article className="grid min-w-0 max-w-[880px] gap-24 md:gap-32">
@@ -222,16 +244,14 @@ export function CaseStudyView({
         ))}
 
         <Link
-          href={`${basePath}/${next.slug}`}
+          href={next.href}
           prefetch
-          data-cursor={nextLabel}
+          data-cursor={next.eyebrow}
           className="group flex items-center justify-between gap-6 rounded-[20px] bg-card px-6 py-6 transition-colors hover:bg-card-2 md:px-8"
         >
           <span className="grid gap-1">
-            <span className="font-mono text-[12px] text-faint">{nextLabel}</span>
-            <span className="font-serif text-[clamp(22px,2.6vw,30px)] font-light">
-              {next.company} · {next.title.join("")}
-            </span>
+            <span className="font-mono text-[12px] text-faint">{next.eyebrow}</span>
+            <span className="font-serif text-[clamp(22px,2.6vw,30px)] font-light">{next.title}</span>
           </span>
           <ArrowRight className="size-5 shrink-0 text-muted transition-[translate,color] group-hover:translate-x-1 group-hover:text-blue" />
         </Link>

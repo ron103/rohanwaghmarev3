@@ -30,13 +30,17 @@ async function ProjectContent({ params }: { params: PageProps<"/projects/[slug]"
   const p = getProject(slug);
   if (!p) notFound();
 
+  const next = projects[(projects.indexOf(p) + 1) % projects.length];
   return (
     <CaseStudyView
       c={p}
-      all={projects}
-      basePath="/projects"
-      navLabel="Projects"
-      nextLabel="next project"
+      nav={{
+        items: projects.map(({ slug, company, role }) => ({ slug, company, role, href: `/projects/${slug}` })),
+        current: p.slug,
+        currentHref: `/projects/${p.slug}`,
+        label: "Projects",
+      }}
+      next={{ href: `/projects/${next.slug}`, eyebrow: "next project", title: `${next.company} · ${next.title.join("")}` }}
       links={p.links}
       meta={[
         { label: "Project", value: p.role },

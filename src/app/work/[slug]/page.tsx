@@ -2,8 +2,9 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import { Page } from "@/components/page";
-import { CaseSkeleton, CaseStudyView, caseGridClass } from "@/components/case-study";
+import { CaseSkeleton, caseGridClass } from "@/components/case-study";
 import { caseStudies, getCaseStudy } from "@/content/work";
+import { WorkCaseView } from "@/components/work/work-case-view";
 
 export function generateStaticParams() {
   return caseStudies.map((c) => ({ slug: c.slug }));
@@ -30,19 +31,5 @@ async function CaseStudyContent({ params }: { params: PageProps<"/work/[slug]">[
   const c = getCaseStudy(slug);
   if (!c) notFound();
 
-  return (
-    <CaseStudyView
-      c={c}
-      all={caseStudies}
-      basePath="/work"
-      navLabel="Case studies"
-      nextLabel="next case study"
-      meta={[
-        { label: "Company", value: c.company },
-        { label: "Role", value: c.role },
-        { label: "Timeline", value: c.timeline },
-        { label: "Scope", value: c.scope },
-      ]}
-    />
-  );
+  return <WorkCaseView c={c} parent={c.slug} href={`/work/${c.slug}`} />;
 }
