@@ -12,7 +12,7 @@ import { SentimentChart } from "@/components/projects/visuals/sentiment-chart";
 import { WatchDemo } from "@/components/projects/visuals/watch-demo";
 import { MarketFunnel } from "@/components/projects/visuals/market-funnel";
 import { PaperScatter } from "@/components/projects/visuals/paper-scatter";
-import type { CaseStudy, Section } from "@/content/work";
+import type { CaseStudy, MoreItem, Section } from "@/content/work";
 
 const NAV_LABELS: Record<string, string> = {
   problem: "The problem",
@@ -22,7 +22,51 @@ const NAV_LABELS: Record<string, string> = {
   serving: "Serving",
   shipped: "Shipping",
   retrieval: "Retrieval",
+  more: "More",
 };
+
+/** Smaller projects from the same role: stats, two short paragraphs, the stack. */
+function MoreCards({ items }: { items: MoreItem[] }) {
+  return (
+    <ul className={items.length > 1 ? "grid gap-4 md:grid-cols-2" : "grid gap-4"}>
+      {items.map((it) => (
+        <li key={it.title} className="grid content-start gap-5 rounded-[20px] bg-card p-6 md:p-7">
+          <h3 className="font-serif text-[clamp(22px,2.4vw,26px)] font-light leading-[1.15] tracking-[-0.01em] text-ink">{it.title}</h3>
+          <dl className="flex flex-wrap gap-x-8 gap-y-4">
+            {it.stats.map((st) => (
+              <div key={st.caption} className="flex flex-col">
+                <dd className="flex items-baseline gap-2 whitespace-nowrap font-mono text-[26px] leading-none tracking-[-0.02em] text-ink">
+                  {st.from && (
+                    <>
+                      <s className="text-[16px] text-faint">{st.from}</s>
+                      <span className="text-[16px] text-blue">→</span>
+                    </>
+                  )}
+                  {st.value}
+                </dd>
+                <dt className="mt-1.5 text-[12.5px] text-muted">{st.caption}</dt>
+              </div>
+            ))}
+          </dl>
+          <div className="grid gap-3">
+            {it.text.map((p) => (
+              <p key={p} className="text-[15px] leading-relaxed text-muted">
+                {p}
+              </p>
+            ))}
+          </div>
+          <ul className="flex flex-wrap gap-1.5">
+            {it.stack.map((t) => (
+              <li key={t} className="rounded-full bg-white px-2.5 py-0.5 font-mono text-[11.5px] text-ink-2 shadow-[inset_0_0_0_1px_var(--color-line)]">
+                {t}
+              </li>
+            ))}
+          </ul>
+        </li>
+      ))}
+    </ul>
+  );
+}
 
 function SectionBody({ s, c }: { s: Section; c: CaseStudy }) {
   switch (s.kind) {
@@ -55,6 +99,8 @@ function SectionBody({ s, c }: { s: Section; c: CaseStudy }) {
       return <MarketFunnel />;
     case "papers":
       return <PaperScatter />;
+    case "more":
+      return <MoreCards items={s.items} />;
     case "placeholder":
       return <Placeholder label={s.label} className="aspect-[16/7]" />;
     default:

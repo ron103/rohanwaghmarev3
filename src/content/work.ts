@@ -28,6 +28,9 @@ export type Trace = { unit: string; axis: number; before: Span[]; after: Span[];
 
 export type CodeLine = { text: string; note?: string };
 
+/** A smaller project from the same role, shown under "More" after the main story. */
+export type MoreItem = { title: string; stats: Stat[]; text: string[]; stack: string[] };
+
 type Base = { id: string; title: string; body: string[] };
 
 export type Section =
@@ -37,7 +40,8 @@ export type Section =
   | { id: string; title: string; body: string[]; kind: "pipeline" }
   | { id: string; title: string; body: string[]; kind: "trace" }
   | { id: string; title: string; body: string[]; kind: "code"; code: { file: string; lines: CodeLine[] } }
-  | { id: string; title: string; body: string[]; kind: "list"; items: { title: string; text: string }[] };
+  | { id: string; title: string; body: string[]; kind: "list"; items: { title: string; text: string }[] }
+  | (Base & { kind: "more"; items: MoreItem[] });
 
 export type CaseStudy = {
   slug: string;
@@ -308,6 +312,35 @@ export const caseStudies: CaseStudy[] = [
           { title: "A feedback loop", text: "Every tool call, output and human decision is stored, which feeds the next round of tuning." },
         ],
       },
+      {
+        id: "more",
+        kind: "more",
+        title: "More from SAP.",
+        body: ["Other things I built here, in short."],
+        items: [
+          {
+            title: "Agents over MCP, and a knowledge graph to ground them",
+            stats: [
+              { value: "5 min", from: "1.5 days", caption: "cross-system update" },
+              { value: "−92%", caption: "developer query time" },
+            ],
+            text: [
+              "FastMCP tool-calling agents now make a cross-system update that used to take a day and a half. Entity-level locking keeps concurrent writes safe, and 5-hop OAuth means every write traces back to a verified user.",
+              "A knowledge-graph RAG service (RDF and SPARQL) answers questions for 5,000+ developers, served over MCP with PKCE auth and OpenTelemetry tracing.",
+            ],
+            stack: ["FastMCP", "RDF / SPARQL", "OAuth + PKCE", "OpenTelemetry"],
+          },
+          {
+            title: "Teaching a model when to compact its own context",
+            stats: [{ value: "12,300+", caption: "training examples" }],
+            text: [
+              "The SFT and RL data pipeline for a Qwen3 model. It joins OpenHands agent trajectories (PostgreSQL) with LLM spans (ClickHouse) into OpenAI-format examples.",
+              "Kimi 2.7 labelled the data, including when the model should run /compact on its own context. Training ran on SageMaker, with endpoints wired straight into the CLI.",
+            ],
+            stack: ["Qwen3", "Kimi 2.7", "SageMaker", "PostgreSQL", "ClickHouse"],
+          },
+        ],
+      },
     ],
   },
   {
@@ -465,24 +498,22 @@ export const caseStudies: CaseStudy[] = [
         body: ["Drag the playhead to compare both runs at the same moment."],
       },
       {
-        id: "retrieval",
-        kind: "list",
-        title: "Retrieval that finds the right record.",
-        body: [
-          "A Vertex AI RAG workflow took physician-note-to-EHR mapping from four hours to ten minutes. Most of the gain came from fixing retrieval, not the model.",
-        ],
+        id: "more",
+        kind: "more",
+        title: "More from MiHIN.",
+        body: ["The other half of the job: helping clinicians find the right record."],
         items: [
           {
-            title: "Stop diluting the vector",
-            text: "Embedding all eight fields together blurred the meaning. Embedding only the free text and filtering on the rest lifted recall@20 from 61% to 88%.",
-          },
-          {
-            title: "Prune before you search",
-            text: "A graph-driven pre-filter removed about 87% of 48K records before similarity scoring.",
-          },
-          {
-            title: "Federated grounding",
-            text: "FHIR and SPARQL lookups resolved entities deterministically instead of asking the model to guess.",
+            title: "Clinical RAG on Vertex AI",
+            stats: [
+              { value: "10 min", from: "4 hr", caption: "note to EHR mapping" },
+              { value: "88%", from: "61%", caption: "recall@20" },
+            ],
+            text: [
+              "A Vertex AI RAG workflow maps physician notes to EHR fields, served through FastAPI and React. Most of the gain came from fixing retrieval, not the model.",
+              "Embedding only the free text and filtering on the structured fields stopped diluting the vector. A graph-driven pre-filter removed about 87% of 48K records before similarity scoring, and FHIR and SPARQL lookups resolved entities instead of guessing.",
+            ],
+            stack: ["Vertex AI", "FHIR", "SPARQL", "FastAPI", "React"],
           },
         ],
       },

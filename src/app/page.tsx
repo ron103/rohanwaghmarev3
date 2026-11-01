@@ -1,11 +1,13 @@
 import Link from "next/link";
-import { Page, Placeholder, SectionLabel } from "@/components/page";
+import { Page, SectionLabel } from "@/components/page";
 import { ProfileCard } from "@/components/profile-card";
 import { StreamingTagline } from "@/components/home/streaming-tagline";
 import { BadgePile } from "@/components/home/badge-pile";
 import { WorkCard } from "@/components/home/work-card";
+import { workCards } from "@/content/work-cards";
 import { QuoteCard, type Quote } from "@/components/home/quote-card";
 import { TilePop } from "@/components/tile-pop";
+import { ProjectPoster } from "@/components/projects/poster";
 import { projects } from "@/content/projects";
 
 const meta = [
@@ -69,23 +71,27 @@ export default function Home() {
 
       {/* Work */}
       <section className="grid grid-cols-1 gap-6 pt-8 md:pt-16">
-        <SectionLabel count={1}>Work</SectionLabel>
-        <WorkCard />
+        <SectionLabel count={workCards.length}>Work</SectionLabel>
+        {workCards.map((c) => (
+          <WorkCard key={c.href} card={c} />
+        ))}
       </section>
 
       {/* Projects */}
       <section className="grid grid-cols-1 gap-6 pt-28 md:pt-40">
         <SectionLabel count={projects.length}>Projects</SectionLabel>
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-          {projects.map((p) => (
+        {/* Two wide cards, then three: fills a 6-column grid with no gaps. */}
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-6">
+          {projects.map((p, i) => (
             <Link
               key={p.slug}
               href={`/projects/${p.slug}`}
+              prefetch
               data-cursor="open project"
-              className="grid min-w-0 grid-cols-1 rounded-[16px] bg-card p-1 transition-colors duration-200 hover:bg-card-2"
+              className={`group grid min-w-0 grid-cols-1 content-start rounded-[16px] bg-card p-1 transition-colors duration-200 hover:bg-card-2 ${i < 2 ? "md:col-span-3" : "md:col-span-2"}`}
             >
-              <TilePop className="aspect-[16/10] rounded-[12px]">
-                <Placeholder label="preview video" className="size-full rounded-[12px]" />
+              <TilePop className={`rounded-[12px] ${i < 2 ? "aspect-[16/9]" : "aspect-[16/10]"}`}>
+                <ProjectPoster slug={p.slug} className="size-full rounded-[12px]" />
               </TilePop>
               <div className="px-4 pb-4 pt-3.5">
                 <h3 className="font-serif text-[26px] font-light tracking-[-0.01em]">{p.company}</h3>
