@@ -2,15 +2,18 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { FileText, Hand, Info, Mail } from "lucide-react";
+import { FileText, Hand, Info, Mail, Search } from "lucide-react";
 import { toast } from "sonner";
 import clsx from "clsx";
 import { GitHubIcon, LinkedInIcon, XIcon } from "./icons";
 import { site } from "@/lib/site";
+import { openPalette } from "./command-palette";
+import { play } from "@/lib/sound";
 
 export async function copyEmail() {
   try {
     await navigator.clipboard.writeText(site.email);
+    play("pop");
     toast("Email copied", { description: site.email });
   } catch {
     toast("Couldn't copy", { description: site.email });
@@ -89,6 +92,17 @@ export function SayHi({ className }: { className?: string }) {
           <Link href={site.links.resume} className={row} onClick={() => setOpen(false)}>
             <FileText className="size-4" strokeWidth={1.6} /> Resume
           </Link>
+          <button
+            type="button"
+            className={row}
+            onClick={() => {
+              setOpen(false);
+              openPalette();
+            }}
+          >
+            <Search className="size-4" strokeWidth={1.6} /> Search
+            <kbd className="ml-auto font-mono text-[11px] text-faint">⌘K</kbd>
+          </button>
           <Link href="/site-info" className={row} onClick={() => setOpen(false)}>
             <Info className="size-4" strokeWidth={1.6} /> Site info
           </Link>

@@ -8,6 +8,8 @@ import { nav } from "@/lib/site";
 import { DoodleLogo } from "./icons";
 import { SayHi } from "./say-hi";
 import { StatusPill } from "./status";
+import { PaletteButton } from "./palette-button";
+import { PresenceDots } from "./presence";
 
 export function isActive(pathname: string, href: string) {
   return href === "/"
@@ -91,7 +93,9 @@ export function TopBar() {
         </div>
 
         <div className="flex items-center justify-end gap-3">
+          <PresenceDots className="hidden sm:flex" />
           <StatusPill className="hidden lg:flex" />
+          <PaletteButton />
           <SayHi />
         </div>
       </div>

@@ -7,6 +7,7 @@ import clsx from "clsx";
 import { GoldenGateIcon, NodeMark } from "../icons";
 import { Portrait } from "../portrait";
 import { OrgLogo } from "../org-logo";
+import { play } from "@/lib/sound";
 
 type Badge = {
   id: string;
@@ -142,6 +143,7 @@ function Sticker({ badge, bounds, z, onFront }: { badge: Badge; bounds: React.Re
     if (reduce) return router.push(badge.href);
     setPeeling(true);
     onFront();
+    play("pop");
     animate(x, x.get() + 70, { duration: 0.5, ease: [0.55, 0, 0.75, 0] });
     animate(y, y.get() - 240, { duration: 0.5, ease: [0.55, 0, 0.75, 0] });
     window.setTimeout(() => router.push(badge.href), 480);

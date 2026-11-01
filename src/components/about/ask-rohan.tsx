@@ -6,7 +6,8 @@ import clsx from "clsx";
 
 export type QA = { q: string; a: string; keywords: string[] };
 
-type Msg = { from: "you" | "rohan"; text: string; shown: number };
+// `live` answers arrive from /api/ask as a text stream; canned ones are revealed word by word.
+type Msg = { from: "you" | "rohan"; text: string; shown: number; live?: boolean; pending?: boolean };
 
 const FALLBACK =
   "I don't have a good answer for that one saved yet. Email me and I'll answer it properly, then it'll live here.";
@@ -23,19 +24,22 @@ function answerFor(input: string, qas: QA[]) {
 }
 
 /**
- * A small Q&A box. Answers are canned for now and stream in word by word.
- * Later this can be swapped for a real retrieval call over the resume.
+ * A small Q&A box. Questions go to /api/ask (Claude, grounded in the site's
+ * own content). If that route is disabled or unreachable, it falls back to
+ * Rohan's canned answers, revealed word by word.
  */
 export function AskRohan({ qas }: { qas: QA[] }) {
   const [msgs, setMsgs] = useState<Msg[]>([]);
   const [draft, setDraft] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [live, setLive] = useState<boolean | null>(null); // null until the first answer tells us
   const log = useRef<HTMLDivElement>(null);
-  const streaming = msgs.some((m) => m.from === "rohan" && m.shown < m.text.split(" ").length);
+  const streaming = busy || msgs.some((m) => m.from === "rohan" && !m.live && m.shown < m.text.split(" ").length);
 
   // Stream the newest answer.
   useEffect(() => {
     const last = msgs[msgs.length - 1];
-    if (!last || last.from !== "rohan") return;
+    if (!last || last.from !== "rohan" || last.live) return;
     const total = last.text.split(" ").length;
     if (last.shown >= total) return;
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -50,10 +54,48 @@ export function AskRohan({ qas }: { qas: QA[] }) {
     log.current?.scrollTo({ top: log.current.scrollHeight, behavior: "smooth" });
   }, [msgs]);
 
-  const ask = (q: string) => {
-    if (!q.trim() || streaming) return;
-    setMsgs((ms) => [...ms, { from: "you", text: q.trim(), shown: Infinity }, { from: "rohan", text: answerFor(q, qas), shown: 0 }]);
+  // Replace the last (Rohan) message.
+  const setLast = (fn: (m: Msg) => Msg) => setMsgs((ms) => ms.map((m, i) => (i === ms.length - 1 ? fn(m) : m)));
+  const canned = (q: string) => setLast(() => ({ from: "rohan", text: answerFor(q, qas), shown: 0 }));
+
+  const ask = async (raw: string) => {
+    const q = raw.trim();
+    if (!q || streaming) return;
+    const history = msgs.map(({ from, text }) => ({ from, text }));
+    setMsgs((ms) => [...ms, { from: "you", text: q, shown: Infinity }, { from: "rohan", text: "", shown: Infinity, live: true, pending: true }]);
     setDraft("");
+    if (live === false) return canned(q);
+
+    setBusy(true);
+    try {
+      const res = await fetch("/api/ask", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ question: q, history }),
+      });
+      if (res.status === 503) {
+        setLive(false);
+        return canned(q);
+      }
+      if (res.status === 429) {
+        setLast((m) => ({ ...m, pending: false, text: "That's a lot of questions at once. Give it a minute, or email me." }));
+        return;
+      }
+      if (!res.ok || !res.body) throw new Error(`ask failed: ${res.status}`);
+      setLive(true);
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      for (;;) {
+        const { value, done } = await reader.read();
+        if (done) break;
+        const chunk = decoder.decode(value, { stream: true });
+        setLast((m) => ({ ...m, pending: false, text: m.text + chunk }));
+      }
+    } catch {
+      canned(q);
+    } finally {
+      setBusy(false);
+    }
   };
 
   const unasked = qas.filter((qa) => !msgs.some((m) => m.from === "you" && m.text === qa.q));
@@ -63,7 +105,7 @@ export function AskRohan({ qas }: { qas: QA[] }) {
       <div ref={log} aria-live="polite" className="grid max-h-[340px] min-h-[120px] content-start gap-3 overflow-y-auto p-2">
         {msgs.length === 0 && (
           <p className="text-[15px] text-muted">
-            Ask me something. These answers are written by me, not generated, at least for now.
+            Ask me anything about my work. Answers are grounded in what&apos;s on this site.
           </p>
         )}
         {msgs.map((m, i) => (
@@ -72,7 +114,7 @@ export function AskRohan({ qas }: { qas: QA[] }) {
               <p className="rounded-[14px] rounded-br-[4px] bg-ink px-3.5 py-2 text-white">{m.text}</p>
             ) : (
               <p className="rounded-[14px] rounded-bl-[4px] bg-white px-3.5 py-2 text-ink-2 shadow-[0_0_0_1px_var(--color-line)]">
-                {m.shown === 0 ? (
+                {m.pending || (!m.live && m.shown === 0) ? (
                   <span className="inline-flex gap-1 py-1.5" aria-label="Thinking">
                     {[0, 1, 2].map((d) => (
                       <i key={d} className="block size-1.5 animate-[caret_1s_steps(1)_infinite] rounded-full bg-faint" style={{ animationDelay: `${d * 160}ms` }} />
@@ -130,6 +172,9 @@ export function AskRohan({ qas }: { qas: QA[] }) {
           <ArrowUp className="size-4" strokeWidth={2} />
         </button>
       </form>
+      <p className="px-2 font-mono text-[11px] text-faint">
+        {live ? "answered by Claude from my resume and notes · can be wrong, email me if it is" : "answers I wrote myself"}
+      </p>
     </div>
   );
 }

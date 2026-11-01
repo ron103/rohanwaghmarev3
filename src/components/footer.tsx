@@ -7,6 +7,7 @@ import { site } from "@/lib/site";
 import { copyEmail } from "./say-hi";
 import { GitHubIcon, LinkedInIcon, XIcon } from "./icons";
 import { StatusLine } from "./status";
+import { SoundToggle } from "./sound-toggle";
 
 type Node = { x: number; y: number; glow: number };
 
@@ -250,6 +251,7 @@ export function Footer() {
             </Link>
           </div>
           <p className="flex flex-wrap items-center gap-x-4 gap-y-1 font-mono text-[12px] text-night-ink/55">
+            <SoundToggle />
             <StatusLine />
             <span>© 2026</span>
           </p>

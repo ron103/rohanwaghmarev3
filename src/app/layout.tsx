@@ -7,6 +7,7 @@ import { Footer } from "@/components/footer";
 import { CursorPrompt } from "@/components/cursor";
 import { site } from "@/lib/site";
 import "./globals.css";
+import { CommandPalette } from "@/components/command-palette";
 
 // Display serif. SOFT/WONK are set in globals.css on .font-serif.
 const fraunces = Fraunces({
@@ -51,6 +52,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         </div>
         <MobileDock />
         <CursorPrompt />
+        <CommandPalette />
         <Toaster
           position="bottom-center"
           toastOptions={{

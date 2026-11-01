@@ -215,6 +215,12 @@ h3 {
   }
 }
 
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
 @keyframes pop-in {
   from {
     opacity: 0;
@@ -345,6 +351,17 @@ h3 {
 @keyframes caret {
   50% {
     opacity: 0;
+  }
+}
+
+/* A visitor's node popping into the presence row */
+.visitor-in {
+  animation: visitor-in 0.5s var(--ease-pop) backwards;
+}
+@keyframes visitor-in {
+  from {
+    opacity: 0;
+    transform: scale(0.4) rotate(-30deg);
   }
 }
 
