@@ -3,17 +3,19 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { RotateCw } from "lucide-react";
 
+// Rohan's own lines. The first one always leads; the rest come in random order.
 const lines = [
-  "I turn 90-second pipelines into 11-second ones.",
-  "I fine-tune models, then make them cheap.",
-  "I give LLMs tools, and keep them honest.",
-  "I build knowledge graphs people can talk to.",
-  "I ship agents that leave an audit trail.",
+  "Once accidentally ended up at the pyramids.",
+  "I almost never miss my water goal.",
+  "I can talk about anything. Try me.",
+  "Occasionally funny. Almost always hilarious.",
+  "Fiction nerd. Currently deep in Dungeon Crawler Carl.",
+  "I can explain anything like you're five.",
+  "Decided I loved coding at age four.",
+  "Building abs by December. Allegedly.",
 ];
-// Every fifth regenerate gets one of these instead.
-const jokes = ["I also hallucinate sometimes. Rarely in prod.", "Temperature set to 0. Personality set to 1."];
 
-const longest = [...lines, ...jokes].reduce((a, b) => (b.length > a.length ? b : a));
+const longest = lines.reduce((a, b) => (b.length > a.length ? b : a));
 const AUTO_MS = 6500;
 
 /**
@@ -27,21 +29,26 @@ export function StreamingTagline() {
   const [streaming, setStreaming] = useState(false);
   const [spin, setSpin] = useState(0);
   const index = useRef(0);
-  const clicks = useRef(0);
+  const deck = useRef<number[]>([]);
   const paused = useRef(false);
   const root = useRef<HTMLDivElement>(null);
   const visible = useRef(true);
 
   const tokens = text.match(/\S+\s*/g) ?? [];
 
-  const next = useCallback((fromClick: boolean) => {
-    let line: string;
-    if (fromClick && ++clicks.current % 5 === 0) {
-      line = jokes[(clicks.current / 5 - 1) % jokes.length];
-    } else {
-      index.current = (index.current + 1) % lines.length;
-      line = lines[index.current];
+  const next = useCallback(() => {
+    // A shuffled deck: every line shows once before any repeats, and a new
+    // round never starts with the line that just played.
+    if (deck.current.length === 0) {
+      const rest = lines.map((_, i) => i).filter((i) => i !== index.current);
+      for (let i = rest.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [rest[i], rest[j]] = [rest[j], rest[i]];
+      }
+      deck.current = rest;
     }
+    index.current = deck.current.shift()!;
+    const line = lines[index.current];
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     setText(line);
     setShown(reduce ? Infinity : 0);
@@ -66,7 +73,7 @@ export function StreamingTagline() {
     const io = new IntersectionObserver(([e]) => (visible.current = e.isIntersecting));
     io.observe(el);
     const id = window.setInterval(() => {
-      if (visible.current && !paused.current && !streaming && document.visibilityState === "visible") next(false);
+      if (visible.current && !paused.current && !streaming && document.visibilityState === "visible") next();
     }, AUTO_MS);
     return () => {
       io.disconnect();
@@ -107,7 +114,7 @@ export function StreamingTagline() {
         type="button"
         onClick={() => {
           setSpin((s) => s + 1);
-          next(true);
+          next();
         }}
         disabled={streaming}
         data-cursor="regenerate"

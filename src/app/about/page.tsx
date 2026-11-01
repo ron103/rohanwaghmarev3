@@ -20,27 +20,26 @@ const sections = [
   { id: "resume", label: "Resume" },
 ];
 
-// Placeholder story drawn from the resume. Rohan will rewrite it in his own words.
+// Rohan's story, in his voice.
 const story: Paragraph[] = [
   [
-    { text: "I got into AI through a chest X-ray. In undergrad I trained a ResNet to spot tuberculosis, " },
-    { text: "hit 92% on TBX11K", mark: true },
-    { text: ", and co-wrote an IEEE paper about it. That was the first time a model I built felt like it could matter to someone." },
+    { text: "The first person I ever helped with code was my dad. After that I taught myself to make games, which was fun until a chest X-ray changed the plan: I trained a model to spot tuberculosis, and for the first time " },
+    { text: "something I'd built felt like it could help someone", mark: true },
+    { text: ". I'm a software engineer at heart, and since then almost everything I build has a model somewhere inside it." },
   ],
   [
-    { text: "Since then I've cared less about demos and more about " },
-    { text: "systems that survive production", mark: true },
-    { text: ". At MiHIN I moved half a million healthcare records through AWS pipelines and built retrieval that took physician-note mapping from four hours to ten minutes." },
+    { text: "I'm originally from Pune, India. I came to the US for an MS in Computer Science at Binghamton University, then worked as a software engineer at MiHIN, building healthcare data pipelines and search that helps clinicians map notes to records. Now I'm in the Bay Area on " },
+    { text: "SAP's Research & Innovation team", mark: true },
+    { text: ", fine-tuning our own models and building AI agents that work inside real systems." },
   ],
   [
-    { text: "At SAP I replaced a three-hop GPT pipeline with two fine-tuned adapters. It got " },
-    { text: "ten times cheaper and eight times faster", mark: true },
-    { text: ", and the data never leaves our servers. I also build MCP agents that let non-engineers change production systems, with every write traced back to a real person." },
+    { text: "I love three things in roughly equal measure: learning, building and explaining. And this is the best time there has ever been for all three. With a good model beside you, almost any hard subject is about " },
+    { text: "two weeks of focused study away", mark: true },
+    { text: ". If you're curious, you're never stuck for long." },
   ],
   [
-    { text: "Outside work I build small things to learn, like a trading bot for prediction markets, and I'd rather " },
-    { text: "ship a scrappy version on Friday", mark: true },
-    { text: " than polish a plan for a month." },
+    { text: "Sometimes I think every invention in human history was leading up to this one: the moment we build something larger than ourselves. I get to help lay the bricks, systems that are faster, more efficient and more trustworthy than the ones before them, that the next few centuries will be built on. " },
+    { text: "I'm exactly where I want to be.", mark: true },
   ],
 ];
 
@@ -122,7 +121,7 @@ export default function About() {
         {/* Story */}
         <section id="story" className="grid scroll-mt-32 gap-8">
           <h1 className="font-serif text-[clamp(32px,4.2vw,44px)] font-semibold leading-[1.1] tracking-[-0.015em]">
-            My name is <span className="mark">Rohan</span>. I build AI systems, and I ship them.
+            My name is <span className="mark">Rohan</span>. Curiosity is my whole personality.
           </h1>
           <ul className="flex flex-wrap gap-2">
             <li className="flex items-center gap-2 rounded-full bg-card px-3 py-1.5 text-[13.5px] text-ink-2">
@@ -200,8 +199,7 @@ export default function About() {
             </Link>
           </div>
           <p className="mt-16 max-w-[56ch] text-[16.5px] leading-relaxed text-ink-2">
-            My favorite projects started with someone saying &ldquo;this is too slow&rdquo; or &ldquo;we can&apos;t trust this yet.&rdquo; If that
-            sounds like your problem, say hi.
+            If you&apos;ve read this far, we&apos;d probably get along. Say hi.
           </p>
           <div className="-ml-[9px] flex items-center gap-1">
             <a className={social} href={`mailto:${site.email}`} aria-label="Email">

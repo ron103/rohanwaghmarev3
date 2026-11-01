@@ -75,9 +75,9 @@ export function ProfileCard() {
       >
         <Portrait size={112} priority />
       </Link>
-      <h2 className="mt-3 text-[16px] font-semibold text-ink-2">Glad you found this</h2>
+      <h2 className="mt-3 text-[16px] font-semibold text-ink-2">Welcome, fellow wanderer</h2>
       <p className="max-w-[34ch] text-[15.5px] leading-[1.55] text-muted">
-        I build AI systems that are fast enough to ship and honest enough to trust.
+        A storyteller who got hooked on solving problems, and ended up writing code for both.
       </p>
       <div className="mt-2 flex items-center gap-2">
         <BridgeButton />
