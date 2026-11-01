@@ -26,12 +26,12 @@ export const projects: Project[] = [
     stack: ["Python", "FastAPI", "OpenAI API"],
     links: [{ label: "Code", href: "https://github.com/ron103/Agentic-Tool-Orchestrator" }],
     title: ["Showing an agent ", "fewer tools", " made it better."],
-    lede: "With every tool in context, the model followed instructions half the time. Routing first and scoping the catalog took that to every time, with 40% less context per call.",
+    lede: "With every tool in context, each call carried 37K tokens of schemas the model mostly didn't need. Routing first and scoping the catalog cut that to 20K, and gave the model a short list it could actually choose from.",
     stats: [
-      { value: "100%", from: "50%", caption: "instruction-following" },
-      { value: "−40%", caption: "context per call" },
+      { value: "20K", from: "37K", caption: "schema tokens per call (−46%)" },
       { value: "191", caption: "tools across 7 services" },
-      { value: "24", caption: "end-to-end tests" },
+      { value: "80", caption: "tests" },
+      { value: "8", caption: "live end-to-end scenarios" },
     ],
     views: [
       {
@@ -57,10 +57,10 @@ export const projects: Project[] = [
               x: 520,
               y: 150,
               kind: "code",
-              detail: "With that much noise, it picked near-miss tools or ignored instructions about half the time.",
+              detail: "With that much noise in context, it reached for near-miss tools and drifted from instructions.",
               secs: 6,
             },
-            { id: "out", label: "Answer", x: 690, y: 150, kind: "io", detail: "Right about 50% of the time on the instruction-following suite.", secs: 0 },
+            { id: "out", label: "Answer", x: 690, y: 150, kind: "io", detail: "About 37K tokens of tool schemas on every call.", secs: 0 },
           ],
           edges: [
             ["in", "llm"],
@@ -106,7 +106,7 @@ export const projects: Project[] = [
               detail: "The agent works with a short, relevant tool list. Mock services run sequentially so results are deterministic in tests.",
               secs: 8,
             },
-            { id: "out", label: "Answer", x: 690, y: 150, kind: "io", detail: "100% on the same instruction-following suite.", secs: 0 },
+            { id: "out", label: "Answer", x: 690, y: 150, kind: "io", detail: "About 20K tokens of schemas per call, 46% fewer.", secs: 0 },
             {
               id: "hatch",
               label: "Escape hatch",
@@ -145,7 +145,7 @@ export const projects: Project[] = [
         title: "191 tools, one confused model.",
         body: [
           "The agent could act on GitHub, Google Calendar, Linear, Gmail, Drive, Slack and Perplexity. Together that's 191 tool schemas, and GitHub alone is 86.",
-          "Putting all of them in context made every call expensive, and the model followed instructions only half the time. It wasn't short of ability. It was drowning in options.",
+          "Putting all of them in context cost about 37K tokens of schemas on every call, and the model kept reaching for near-miss tools. It wasn't short of ability. It was drowning in options.",
         ],
       },
       {
@@ -172,7 +172,7 @@ export const projects: Project[] = [
         items: [
           { title: "Budgets", text: "10 LLM turns, 30 tool calls and a 60-second soft budget per request." },
           { title: "Repeat-failure stop", text: "Two identical failures in a row end the run instead of looping on a broken call." },
-          { title: "24-test suite", text: "End-to-end tests over the mock services, so routing changes can't quietly regress." },
+          { title: "80 tests", text: "Including 8 live end-to-end scenarios, so routing changes can't quietly regress." },
         ],
       },
     ],

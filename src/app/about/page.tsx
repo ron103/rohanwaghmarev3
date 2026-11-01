@@ -56,7 +56,7 @@ const roles: Role[] = [
       "QLoRA adapters on DeepSeek-R1 14B: 10× cheaper, p95 90s → 11s, 98% accuracy",
       "FastMCP agents: cross-system updates from 1.5 days to 5 minutes",
       "Knowledge-graph RAG over MCP for 5,000+ developers, query time down 92%",
-      "Long-context SFT data for Gemma-4-12B: 279 agent runs into 16K, 32K and 64K datasets, trained with sequence parallelism on 8 B200s",
+      "Long-context SFT for Gemma-4-12B: agent pass rate from 65% to 80.8%, trained at 64K context with sequence parallelism on 8 B200s",
     ],
   },
   {

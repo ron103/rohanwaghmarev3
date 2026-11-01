@@ -168,12 +168,12 @@ export const stories: Story[] = [
     place: "Palo Alto, CA",
     scope: "SFT data, SageMaker, evaluation",
     title: ["Training on agent runs ", "too long to fit", "."],
-    lede: "SAP wanted Gemma-4-12B fine-tuned on real software-engineering agent runs, and the runs were 50K–100K+ tokens. The whole project was one question: how do we fit them under our budget? Compaction was one answer, sequence parallelism the other.",
+    lede: "SAP wanted Gemma-4-12B fine-tuned on real software-engineering agent runs, and the runs were 50K–100K+ tokens. The whole project was one question: how do we fit them under our budget? Compaction was one answer, sequence parallelism the other. The fine-tuned model's agent pass rate went from 65% to 80.8%.",
     stats: [
+      { value: "80.8%", from: "65%", caption: "agent pass rate" },
       { value: "63K", from: "16K", caption: "longest sample trained" },
       { value: "279", caption: "trajectories converted" },
       { value: "8× B200", caption: "sequence-parallel" },
-      { value: "0", caption: "over-context samples" },
     ],
     views: [
       {
@@ -263,7 +263,7 @@ export const stories: Story[] = [
               secs: 1,
             },
             { id: "sm", label: "SageMaker", sub: "inference component", x: 550, y: 150, kind: "model", detail: "The fine-tuned Gemma endpoint. The transport was validated against a live endpoint.", secs: 5 },
-            { id: "score", label: "Score", x: 700, y: 150, kind: "io", detail: "A benchmark result for the fine-tuned model, comparable to the baseline.", secs: 0 },
+            { id: "score", label: "Score", x: 700, y: 150, kind: "io", detail: "Agent pass rate went from 65% to 80.8%, counting both fail-to-pass and pass-to-pass tests.", secs: 0 },
             {
               id: "batch",
               label: "AWS Batch",

@@ -416,9 +416,11 @@ h3 {
 
 /* Printing (Save as PDF on /resume): only the sheet, no chrome or grain. */
 @media print {
+  /* Zero page margin: browsers draw their date/title/URL header and footer in
+     the margin, so without one they have nowhere to go. The sheet pads itself. */
   @page {
     size: letter;
-    margin: 0.5in;
+    margin: 0;
   }
   body * {
     visibility: hidden;
@@ -430,6 +432,7 @@ h3 {
   .print-area {
     position: absolute;
     inset: 0 0 auto;
+    width: 100%;
   }
   .paper-grain {
     display: none;

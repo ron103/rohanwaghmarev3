@@ -88,7 +88,8 @@ export function ResumeView({ children, pdf }: { children: ReactNode; pdf?: strin
         </span>
       </div>
 
-      <div className="relative">
+      {/* Static in print, so the sheet is placed against the page, not this box. */}
+      <div className="relative print:static">
         {!ready && (
           <pre
             aria-hidden="true"

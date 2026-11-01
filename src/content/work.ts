@@ -338,8 +338,8 @@ export const caseStudies: CaseStudy[] = [
           {
             title: "Training on agent runs too long to fit",
             stats: [
+              { value: "80.8%", from: "65%", caption: "agent pass rate" },
               { value: "63K", from: "16K", caption: "longest sample trained" },
-              { value: "279", caption: "trajectories converted" },
             ],
             text: [
               "A long-context SFT pipeline for Gemma-4-12B, built from real software-engineering agent runs that were 50K–100K+ tokens long.",

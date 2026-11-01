@@ -37,7 +37,7 @@ export default function Resume() {
       </div>
       <ResumeView pdf={hasPdf ? PDF : undefined}>
         {/* The sheet: letter-size proportions, serif body like the LaTeX original. */}
-        <article className="mx-auto grid w-full max-w-[816px] gap-4 bg-white px-[clamp(20px,6vw,56px)] py-[clamp(24px,6vw,52px)] font-serif text-[12.5px] leading-[1.45] text-ink shadow-[0_0_0_1px_rgba(0,0,0,0.06),0_30px_60px_-30px_rgba(0,0,0,0.35)] print:max-w-none print:p-0 print:text-[11px] print:shadow-none">
+        <article className="mx-auto grid w-full max-w-[816px] gap-4 bg-white px-[clamp(20px,6vw,56px)] py-[clamp(24px,6vw,52px)] font-serif text-[12.5px] leading-[1.45] text-ink shadow-[0_0_0_1px_rgba(0,0,0,0.06),0_30px_60px_-30px_rgba(0,0,0,0.35)] print:max-w-none print:gap-3 print:px-[0.4in] print:py-[0.4in] print:text-[11px] print:shadow-none">
           <header className="grid gap-1 text-center">
             <h1 className="text-[26px] font-bold leading-tight">{resume.name}</h1>
             <p className="text-[14px]">{resume.headline}</p>
