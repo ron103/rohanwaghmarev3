@@ -11,10 +11,11 @@ export const stories: Story[] = [
     parent: "sap",
     slug: "agents",
     storyLabel: "Agents & knowledge graph",
-    company: "SAP Labs US",
+    company: "SAP",
     logo: "sap",
     badge: "Agents · 2026",
-    role: "Software Developer, AI",
+    role: "Software Developer",
+    team: "Research & Innovation",
     timeline: "2026",
     place: "Palo Alto, CA",
     scope: "MCP agents, knowledge-graph RAG",
@@ -91,7 +92,7 @@ export const stories: Story[] = [
               x: 230,
               y: 262,
               kind: "code",
-              detail: "The user's identity is carried through five OAuth hops to the agent's tool calls, so no write is anonymous.",
+              detail: "User → Claude → MCP server → PKCE with XSUAA → SAP auth → Microsoft Entra. The user's identity survives every hop, so no write is anonymous.",
             },
           ],
           edges: [
@@ -144,7 +145,10 @@ export const stories: Story[] = [
         title: "Every write has a name on it.",
         body: ["Agents that change real systems need to be accountable and observable."],
         items: [
-          { title: "5-hop OAuth", text: "The requesting user's identity travels all the way to the tool call, so every write traces to a verified person." },
+          {
+            title: "5-hop OAuth",
+            text: "User → Claude → MCP server → PKCE with XSUAA → SAP auth → Microsoft Entra. The user's identity travels the whole way, so every write traces to a verified person.",
+          },
           { title: "PKCE", text: "The knowledge-graph service uses OAuth with PKCE, so a public client can sign in safely." },
           { title: "OpenTelemetry", text: "Every query and tool call is traced, so slow or failing paths show up on a dashboard." },
         ],
@@ -155,20 +159,21 @@ export const stories: Story[] = [
     parent: "sap",
     slug: "training-data",
     storyLabel: "Long-context training data",
-    company: "SAP Labs US",
+    company: "SAP",
     logo: "sap",
     badge: "SFT · 2026",
-    role: "Software Developer, AI",
+    role: "Software Developer",
+    team: "Research & Innovation",
     timeline: "2026",
     place: "Palo Alto, CA",
     scope: "SFT data, SageMaker, evaluation",
-    title: ["Fitting 100K-token agent runs into ", "a 16K window", "."],
-    lede: "SAP wanted Gemma-4-12B fine-tuned on real software-engineering agent runs. The runs were 50K–100K+ tokens, full of unrelated spans, and preprocessing was quietly dropping tool calls. I built the path from raw traces to a trained model to a benchmark score.",
+    title: ["Training on agent runs ", "too long to fit", "."],
+    lede: "SAP wanted Gemma-4-12B fine-tuned on real software-engineering agent runs, and the runs were 50K–100K+ tokens. The whole project was one question: how do we fit them under our budget? Compaction was one answer, sequence parallelism the other.",
     stats: [
+      { value: "63K", from: "16K", caption: "longest sample trained" },
       { value: "279", caption: "trajectories converted" },
-      { value: "15.4K", caption: "tool calls preserved" },
+      { value: "8× B200", caption: "sequence-parallel" },
       { value: "0", caption: "over-context samples" },
-      { value: "379", caption: "Kimi calls reused from cache" },
     ],
     views: [
       {
@@ -224,7 +229,8 @@ export const stories: Story[] = [
               x: 390,
               y: 225,
               kind: "model",
-              detail: "The training notebook was fixed so Arrow preprocessing keeps tool calls, IDs, names and reasoning, with exact assistant-only-loss token counts.",
+              detail:
+                "On ml.p6-b200.48xlarge: 8× B200 with sequence parallelism 8 and data parallelism 1, up to 63,263 tokens per sample. The notebook was fixed so preprocessing keeps tool calls, IDs, names and reasoning.",
               secs: 8,
             },
             { id: "cortex", label: "Cortex", sub: "dataset registry", x: 700, y: 225, kind: "store", detail: "Datasets are registered so they can be mixed with the base SFT corpus.", secs: 0 },
@@ -283,9 +289,11 @@ export const stories: Story[] = [
         id: "problem",
         kind: "list",
         title: "Runs too long, too noisy, too lossy.",
-        body: ["The source traces had three problems before any training could start."],
+        body: [
+          "The source traces had three problems before any training could start. Length was the big one: the question for the whole project was how to fit runs this long under our context and memory budget.",
+        ],
         items: [
-          { title: "Too long", text: "Runs were 50K–100K+ tokens, well past the training context limits." },
+          { title: "Too long", text: "Runs were 50K–100K+ tokens, far past what a 16K proof of concept could hold." },
           { title: "Too noisy", text: "Traces mixed in LLM spans that had nothing to do with the agent's work." },
           { title: "Too lossy", text: "Notebook preprocessing was silently dropping tool calls, IDs, names and reasoning." },
         ],
@@ -299,10 +307,19 @@ export const stories: Story[] = [
       {
         id: "context",
         kind: "context",
-        title: "Cutting a run without breaking it.",
+        title: "Lever one: cut the run, keep the meaning.",
         body: [
           "A tool call and its result are one unit, so a cut never lands between them. When the history won't fit, Kimi summarizes what came before, and the next sample starts from that summary.",
           "Pick a window size. Smaller windows mean more samples, and more compactions to learn from.",
+        ],
+      },
+      {
+        id: "sp",
+        kind: "sp",
+        title: "Lever two: split the sequence across GPUs.",
+        body: [
+          "Compaction shrinks what the model sees. Sequence parallelism handles what's left: one long sample is split across eight B200s, so a 63K-token sample trains where one GPU would run out of memory.",
+          "That took us from a 16K proof of concept to samples up to 63,263 tokens. Toggle to compare.",
         ],
       },
       {

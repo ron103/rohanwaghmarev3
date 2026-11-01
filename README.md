@@ -33,20 +33,19 @@ npm run build
 
 ## Optional services
 
-Both are off until you add a key; the site works fully without them. Copy `.env.example` to `.env.local` (or set the variables on your host).
+It's off until you add a key; the site works fully without it. Copy `.env.example` to `.env.local` (or set the variables on your host).
 
 | Variable | Turns on | Without it |
 |---|---|---|
-| `ANTHROPIC_API_KEY` | "Ask me" on /about answers with Claude (Opus 5.5, low effort), grounded in `src/content/*` via `src/lib/profile-context.ts` | Canned answers from `src/content/qa.ts` |
 | `ABLY_API_KEY` | Live "N people here right now" dots in the top bar | Indicator stays hidden |
 
-`/api/ask` rate-limits each visitor (8 questions a minute per server instance) and caps question length. For real traffic, move the limit to a shared store.
+The FAQ on /about reads from `src/content/qa.ts`. There is no AI API on the site.
 
 ## Build phases
 
 0. Foundation (done)
 1. Home: streaming tagline, badge pile, trace waterfall, rolling numbers (done)
-2. About: story wrapped around the portrait, git-log timeline, physics tool shelf, Ask Rohan (done)
+2. About: story wrapped around the portrait, experience timeline, physics tool shelf, FAQ (done)
 3. Work: pipeline diagram, before/after slider, trace replay (done)
 4. Projects, Notes, Resume, 404 (done)
-5. ⌘K palette, sound, live Ask me, presence (done)
+5. ⌘K palette, sound, FAQ, presence (done)

@@ -14,9 +14,9 @@ export function WorkCaseView({ c, parent, href }: { c: CaseStudy; parent: string
       next={{ href: next.href, eyebrow: "next case study", title: `${next.c.company} · ${next.c.title.join("")}` }}
       meta={[
         { label: "Company", value: c.company },
+        c.team ? { label: "Team", value: c.team } : { label: "Scope", value: c.scope },
         { label: "Role", value: c.role },
         { label: "Timeline", value: c.timeline },
-        { label: "Scope", value: c.scope },
       ]}
     />
   );

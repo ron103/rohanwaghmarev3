@@ -21,7 +21,7 @@ export const workCards: WorkCardData[] = [
   {
     href: "/work/sap",
     org: "sap",
-    company: "SAP Labs US",
+    company: "SAP",
     badge: "LLM · 2026",
     title: ["Replacing a GPT pipeline with ", "models we own", "."],
     sub: "Two QLoRA adapters on DeepSeek-R1 14B, served through vLLM.",

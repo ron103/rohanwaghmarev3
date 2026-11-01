@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { FileText } from "lucide-react";
 import { site, pacificTime, statusFor } from "@/lib/site";
-import { GitHubIcon, GoldenGateIcon, LinkedInIcon, XIcon } from "./icons";
+import { GitHubIcon, GoldenGateIcon, LinkedInIcon } from "./icons";
 import { usePacificNow } from "./status";
 import { Portrait } from "./portrait";
 
@@ -90,10 +90,6 @@ export function ProfileCard() {
         <a className={iconLink} href={site.links.github} target="_blank" rel="noreferrer" aria-label="GitHub">
           <GitHubIcon className="size-[17px]" />
           <Tip>GitHub</Tip>
-        </a>
-        <a className={iconLink} href={site.links.x} target="_blank" rel="noreferrer" aria-label="X">
-          <XIcon className="size-[15px]" />
-          <Tip>X</Tip>
         </a>
         <Link className={iconLink} href={site.links.resume} aria-label="Resume">
           <FileText className="size-[17px]" strokeWidth={1.6} />

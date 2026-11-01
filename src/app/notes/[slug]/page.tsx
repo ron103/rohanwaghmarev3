@@ -6,6 +6,10 @@ import clsx from "clsx";
 import { Page, Placeholder } from "@/components/page";
 import { TokenBar } from "@/components/notes/token-bar";
 import { EmbeddingFigure } from "@/components/notes/embedding-figure";
+import { AuthChain } from "@/components/notes/auth-chain";
+import { DistillFigure } from "@/components/notes/distill-figure";
+import { ContextMeter } from "@/components/work/visuals/context-meter";
+import { SeqParallel } from "@/components/work/visuals/seq-parallel";
 import { getNote, notes, tokenCount, type Block } from "@/content/notes";
 
 export function generateStaticParams() {
@@ -18,12 +22,20 @@ export async function generateMetadata({ params }: PageProps<"/notes/[slug]">): 
   return { title: n?.title ?? "Notes", description: n?.dek };
 }
 
+const FIGURES: Partial<Record<string, React.ReactNode>> = {
+  embeddings: <EmbeddingFigure />,
+  "auth-chain": <AuthChain />,
+  distill: <DistillFigure />,
+  compaction: <ContextMeter />,
+  "seq-parallel": <SeqParallel />,
+};
+
 function BlockView({ b }: { b: Block }) {
   if (b.kind === "h") return <h2 className="mt-6 font-serif text-[26px] font-light tracking-[-0.01em]">{b.text}</h2>;
   if (b.kind === "figure")
     return (
       <figure className="my-4 grid gap-3">
-        {b.figure === "embeddings" ? <EmbeddingFigure /> : <Placeholder label="figure · coming soon" className="aspect-[16/8]" />}
+        {FIGURES[b.figure] ?? <Placeholder label="figure · coming soon" className="aspect-[16/8]" />}
         <figcaption className="text-[13.5px] text-faint">{b.caption}</figcaption>
       </figure>
     );

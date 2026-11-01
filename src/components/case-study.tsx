@@ -16,6 +16,7 @@ import { LockRace } from "@/components/work/visuals/lock-race";
 import { KgQuery } from "@/components/work/visuals/kg-query";
 import { ContextMeter } from "@/components/work/visuals/context-meter";
 import { RetrievalCompare } from "@/components/work/visuals/retrieval-compare";
+import { SeqParallel } from "@/components/work/visuals/seq-parallel";
 import type { CaseStudy, MoreItem, Section } from "@/content/work";
 
 const NAV_LABELS: Record<string, string> = {
@@ -31,6 +32,7 @@ const NAV_LABELS: Record<string, string> = {
   kg: "Knowledge graph",
   trust: "Accountability",
   context: "Compaction",
+  sp: "Sequence parallelism",
   recompress: "Recompression",
   fair: "Fair comparison",
 };
@@ -127,6 +129,8 @@ function SectionBody({ s, c }: { s: Section; c: CaseStudy }) {
       return <ContextMeter />;
     case "retrieval":
       return <RetrievalCompare />;
+    case "sp":
+      return <SeqParallel />;
     case "more":
       return <MoreCards items={s.items} />;
     case "placeholder":

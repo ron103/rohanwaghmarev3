@@ -1,13 +1,13 @@
 export const site = {
   name: "Rohan Waghmare",
-  role: "Software Developer, AI",
+  role: "Software Developer",
   email: "waghmarerohan30@gmail.com",
   location: "Bay Area, home",
   timeZone: "America/Los_Angeles",
   links: {
     linkedin: "https://linkedin.com/in/rohanwaghmare",
     github: "https://github.com/ron103",
-    x: "https://x.com/",
+    // x: "https://x.com/…", // no account yet; restore here, then add the icon back in profile-card, say-hi and footer
     resume: "/resume",
   },
 };
@@ -25,7 +25,7 @@ export const statusLines: [start: number, end: number, line: string][] = [
   [420, 540, "First chai of the day. It's a slow one."],
   [540, 720, "Deep in a training run. Watching the loss go down."],
   [720, 810, "Lunch, and reading someone else's paper."],
-  [810, 1020, "Shipping something at SAP Labs."],
+  [810, 1020, "Shipping something at SAP."],
   [1020, 1140, "Out for a walk while an eval finishes."],
   [1140, 1320, "Building side projects. Probably breaking them."],
   [1320, 1440, "Winding down. One more PR, then sleep."],

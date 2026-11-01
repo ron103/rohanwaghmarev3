@@ -35,7 +35,7 @@ type Base = { id: string; title: string; body: string[] };
 
 export type Section =
   | (Base & { kind?: "text" })
-  | (Base & { kind: "toolgrid" | "schema" | "sentiment" | "watch" | "funnel" | "papers" | "locks" | "kg" | "context" | "retrieval" })
+  | (Base & { kind: "toolgrid" | "schema" | "sentiment" | "watch" | "funnel" | "papers" | "locks" | "kg" | "context" | "retrieval" | "sp" })
   | (Base & { kind: "placeholder"; label: string })
   | { id: string; title: string; body: string[]; kind: "pipeline" }
   | { id: string; title: string; body: string[]; kind: "trace" }
@@ -50,6 +50,7 @@ export type CaseStudy = {
   badge?: string;
   storyLabel?: string; // short name in the side nav when a company has several stories
   role: string;
+  team?: string;
   timeline: string;
   place: string;
   scope: string;
@@ -64,11 +65,12 @@ export type CaseStudy = {
 export const caseStudies: CaseStudy[] = [
   {
     slug: "sap",
-    company: "SAP Labs US",
+    company: "SAP",
     logo: "sap",
     badge: "LLM · 2026",
     storyLabel: "Fine-tuning",
-    role: "Software Developer, AI",
+    role: "Software Developer",
+    team: "Research & Innovation",
     timeline: "Jan 2026 – Present",
     place: "Palo Alto, CA",
     scope: "Fine-tuning, serving, MLOps",
@@ -334,14 +336,14 @@ export const caseStudies: CaseStudy[] = [
             href: "/work/sap/agents",
           },
           {
-            title: "Fitting 100K-token agent runs into a 16K window",
+            title: "Training on agent runs too long to fit",
             stats: [
+              { value: "63K", from: "16K", caption: "longest sample trained" },
               { value: "279", caption: "trajectories converted" },
-              { value: "15.4K", caption: "tool calls preserved" },
             ],
             text: [
               "A long-context SFT pipeline for Gemma-4-12B, built from real software-engineering agent runs that were 50K–100K+ tokens long.",
-              "Runs are cut into 16K, 32K and 64K samples without splitting a tool call from its result, with Kimi summarizing whatever no longer fits. Training ran on SageMaker, and CAP-Bench can now evaluate the hosted model.",
+              "Two levers fit them under budget: compaction, with Kimi summarizing what no longer fits, and sequence parallelism across eight B200s. CAP-Bench can now evaluate the hosted model.",
             ],
             stack: ["Gemma-4-12B", "Kimi", "SageMaker", "LiteLLM", "OpenHands"],
             href: "/work/sap/training-data",

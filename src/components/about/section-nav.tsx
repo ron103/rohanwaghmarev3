@@ -9,7 +9,7 @@ const icons: Record<string, LucideIcon> = {
   experience: Briefcase,
   tools: Wrench,
   education: GraduationCap,
-  ask: MessageCircle,
+  faq: MessageCircle,
   resume: FileText,
   notes: BookOpen,
 };

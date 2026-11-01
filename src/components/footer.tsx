@@ -5,7 +5,7 @@ import Link from "next/link";
 import { FileText } from "lucide-react";
 import { site } from "@/lib/site";
 import { copyEmail } from "./say-hi";
-import { GitHubIcon, LinkedInIcon, XIcon } from "./icons";
+import { GitHubIcon, LinkedInIcon } from "./icons";
 import { StatusLine } from "./status";
 import { SoundToggle } from "./sound-toggle";
 
@@ -223,15 +223,6 @@ export function Footer() {
               aria-label="LinkedIn"
             >
               <LinkedInIcon className="size-[17px]" />
-            </a>
-            <a
-              className={social}
-              href={site.links.x}
-              target="_blank"
-              rel="noreferrer"
-              aria-label="X"
-            >
-              <XIcon className="size-[15px]" />
             </a>
             <a
               className={social}

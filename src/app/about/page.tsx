@@ -2,12 +2,12 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowUpRight, Download, FileText, Mail } from "lucide-react";
 import { Page } from "@/components/page";
-import { GoldenGateIcon, GitHubIcon, LinkedInIcon, XIcon } from "@/components/icons";
+import { GoldenGateIcon, GitHubIcon, LinkedInIcon } from "@/components/icons";
 import { SectionNav } from "@/components/about/section-nav";
 import { Story, type Paragraph } from "@/components/about/story";
-import { GitLog, type Commit } from "@/components/about/git-log";
+import { Timeline, type Role } from "@/components/about/timeline";
 import { ToolShelf, type Tool } from "@/components/about/tool-shelf";
-import { AskRohan } from "@/components/about/ask-rohan";
+import { Faq } from "@/components/about/faq";
 import { qas } from "@/content/qa";
 import { site } from "@/lib/site";
 import { OrgLogo } from "@/components/org-logo";
@@ -19,7 +19,7 @@ const sections = [
   { id: "experience", label: "Experience" },
   { id: "tools", label: "Tools" },
   { id: "education", label: "Education" },
-  { id: "ask", label: "Ask me" },
+  { id: "faq", label: "FAQ" },
   { id: "resume", label: "Resume" },
 ];
 
@@ -36,7 +36,7 @@ const story: Paragraph[] = [
     { text: ". At MiHIN I moved half a million healthcare records through AWS pipelines and built retrieval that took physician-note mapping from four hours to ten minutes." },
   ],
   [
-    { text: "At SAP Labs I replaced a three-hop GPT pipeline with two fine-tuned adapters. It got " },
+    { text: "At SAP I replaced a three-hop GPT pipeline with two fine-tuned adapters. It got " },
     { text: "ten times cheaper and eight times faster", mark: true },
     { text: ", and the data never leaves our servers. I also build MCP agents that let non-engineers change production systems, with every write traced back to a real person." },
   ],
@@ -47,43 +47,43 @@ const story: Paragraph[] = [
   ],
 ];
 
-const commits: Commit[] = [
+const roles: Role[] = [
   {
-    hash: "a1f3c9e",
-    refs: ["HEAD -> main"],
+    id: "sap",
     when: "Jan 2026 – now",
-    company: "SAP Labs US",
+    company: "SAP",
     logo: "sap",
-    role: "Software Developer, AI",
-    place: "Palo Alto, CA",
-    diff: [
+    role: "Software Developer",
+    team: "Research & Innovation",
+    place: "SAP Labs · Palo Alto, CA",
+    highlights: [
       "QLoRA adapters on DeepSeek-R1 14B: 10× cheaper, p95 90s → 11s, 98% accuracy",
       "FastMCP agents: cross-system updates from 1.5 days to 5 minutes",
       "Knowledge-graph RAG over MCP for 5,000+ developers, query time down 92%",
-      "SFT data pipeline for a Qwen3 model: 12,300+ examples from agent traces",
+      "Long-context SFT data for Gemma-4-12B: 279 agent runs into 16K, 32K and 64K datasets, trained with sequence parallelism on 8 B200s",
     ],
   },
   {
-    hash: "7be21d0",
+    id: "mihin",
     when: "Mar 2025 – Jan 2026",
     company: "MiHIN",
     logo: "mihin",
     role: "Software Engineer",
     place: "Binghamton, NY",
-    diff: [
+    highlights: [
       "AWS ingestion for 500K+ records from 10+ healthcare orgs, 40% faster",
       "Clinical RAG: physician note to EHR mapping from 4 hours to 10 minutes",
       "Retrieval recall@20 from 61% to 88% by separating text from filters",
     ],
   },
   {
-    hash: "3c90a4f",
+    id: "btc",
     when: "Aug 2024 – Mar 2025",
     company: "Binghamton Tech Collective",
     logo: "binghamton",
     role: "Software Engineer",
     place: "Binghamton, NY",
-    diff: ["Shop Bing student marketplace: 100+ users in two weeks, 200+ listings", "Cut fake sign-ups 95% with .edu verification"],
+    highlights: ["Shop Bing student marketplace: 100+ users in two weeks, 200+ listings", "Cut fake sign-ups 95% with .edu verification"],
   },
 ];
 
@@ -131,7 +131,7 @@ export default function About() {
             <li className="flex items-center gap-2 rounded-full bg-card px-3 py-1.5 text-[13.5px] text-ink-2">
               <GoldenGateIcon animate={false} className="h-3.5 w-6" /> Bay Area
             </li>
-            <li className="rounded-full bg-card px-3 py-1.5 text-[13.5px] text-ink-2">Software Developer, AI · SAP Labs</li>
+            <li className="rounded-full bg-card px-3 py-1.5 text-[13.5px] text-ink-2">Software Developer · SAP Research &amp; Innovation</li>
             <li className="rounded-full bg-card px-3 py-1.5 text-[13.5px] text-ink-2">MS CS, Binghamton</li>
             <li>
               <a
@@ -150,9 +150,9 @@ export default function About() {
         {/* Experience */}
         <section id="experience" className="grid scroll-mt-32 gap-6">
           <h2 className="font-serif text-[26px] font-light text-muted">
-            experience <span className="font-mono text-[13px] text-faint">git log --graph</span>
+            experience
           </h2>
-          <GitLog commits={commits} />
+          <Timeline roles={roles} />
         </section>
 
         {/* Tools */}
@@ -183,9 +183,9 @@ export default function About() {
         </section>
 
         {/* Ask */}
-        <section id="ask" className="grid scroll-mt-32 gap-6">
-          <h2 className="font-serif text-[26px] font-light text-muted">ask me</h2>
-          <AskRohan qas={qas} />
+        <section id="faq" className="grid scroll-mt-32 gap-6">
+          <h2 className="font-serif text-[26px] font-light text-muted">questions people ask</h2>
+          <Faq qas={qas} />
         </section>
 
         {/* Resume + sign-off */}
@@ -219,9 +219,6 @@ export default function About() {
             </a>
             <a className={social} href={site.links.github} target="_blank" rel="noreferrer" aria-label="GitHub">
               <GitHubIcon className="size-[17px]" />
-            </a>
-            <a className={social} href={site.links.x} target="_blank" rel="noreferrer" aria-label="X">
-              <XIcon className="size-[15px]" />
             </a>
           </div>
         </section>

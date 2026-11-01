@@ -26,7 +26,7 @@ type Badge = {
 const badges: Badge[] = [
   {
     id: "sap",
-    label: "SAP Labs badge. Opens the SAP case study.",
+    label: "SAP badge. Opens the SAP case study.",
     href: "/work/sap",
     x: 0,
     w: 164,

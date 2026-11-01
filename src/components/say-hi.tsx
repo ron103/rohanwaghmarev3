@@ -5,7 +5,7 @@ import Link from "next/link";
 import { FileText, Hand, Info, Mail, Search } from "lucide-react";
 import { toast } from "sonner";
 import clsx from "clsx";
-import { GitHubIcon, LinkedInIcon, XIcon } from "./icons";
+import { GitHubIcon, LinkedInIcon } from "./icons";
 import { site } from "@/lib/site";
 import { openPalette } from "./command-palette";
 import { play } from "@/lib/sound";
@@ -69,9 +69,6 @@ export function SayHi({ className }: { className?: string }) {
           <div className="relative grid grid-cols-2 gap-1.5">
             <a className={tile} href={site.links.linkedin} target="_blank" rel="noreferrer" aria-label="LinkedIn">
               <LinkedInIcon className="size-[17px]" />
-            </a>
-            <a className={tile} href={site.links.x} target="_blank" rel="noreferrer" aria-label="X">
-              <XIcon className="size-[15px]" />
             </a>
             <a className={tile} href={site.links.github} target="_blank" rel="noreferrer" aria-label="GitHub">
               <GitHubIcon className="size-[17px]" />

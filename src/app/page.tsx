@@ -11,7 +11,7 @@ import { ProjectPoster } from "@/components/projects/poster";
 import { projects } from "@/content/projects";
 
 const meta = [
-  { label: "Currently", value: "Software Developer @SAP Labs" },
+  { label: "Currently", value: "Software Developer, Research & Innovation @SAP" },
   { label: "Previously", value: "Michigan Health Information Network"},
   { label: "Studied", value: "MS CS, Binghamton University" },
 ];
